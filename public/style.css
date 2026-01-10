@@ -1,0 +1,152 @@
+* { box-sizing: border-box; }
+
+:root{
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #4b5563;
+  --border: #e6e8ef;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px;
+}
+
+.card {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.header {
+  padding: 18px 22px;
+  background: #0b5cff;
+  color: white;
+}
+
+.headerTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: 0.2px;
+}
+
+.subtitle{
+  margin: 6px 0 0;
+  opacity: 0.9;
+  line-height: 1.35;
+  font-size: 0.98rem;
+}
+
+.nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav a{
+  color: white;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.14);
+}
+
+.nav a:hover{
+  background: rgba(255,255,255,0.22);
+}
+
+.content{
+  padding: 18px 22px 22px;
+}
+
+.grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 720px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+.box {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.box h2{
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.list {
+  margin: 10px 0 12px;
+  padding-left: 18px;
+  color: var(--text);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #cfd6e4;
+  outline: none;
+}
+
+button {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  background: #111827;
+  color: white;
+}
+
+button:hover{
+  opacity: 0.92;
+}
+
+.hint {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.small{
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.footer{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+

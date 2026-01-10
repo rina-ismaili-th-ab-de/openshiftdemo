@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenShift PaaS Demo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <div class="headerTop">
+        <div>
+          <h1 class="title">OpenShift PaaS Demo</h1>
+          <p class="subtitle">
+            Mini-Anwendung, die als Deployment in OpenShift läuft und über eine Route erreichbar ist.
+          </p>
+        </div>
+
+        <nav class="nav">
+          <a href="/">Dashboard</a>
+          <a href="/tests.html">Tests</a>
+          <a href="/about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="grid">
+        <section class="box">
+          <h2>Projektinfo</h2>
+          <p class="small">
+            Diese Demo zeigt eine Web-App, die wir in Red Hat OpenShift als Deployment betreiben und über eine Route im Browser erreichen.
+          </p>
+          <p class="small">
+            Team: Rina Ismaili und Alma Dacik<br>
+            OpenShift Projekt: rina-ismaili-th-ab-d-dev
+          </p>
+          <p class="hint">
+            Tipp: Wenn wir später auf 2 Pods skalieren, kann man beim Neuladen unterschiedliche “Instance (Pod)” sehen.
+          </p>
+        </section>
+
+        <section class="box">
+          <h2>Status aus dem Container</h2>
+          <div class="small">Version: <span id="version">-</span></div>
+          <div class="small">Instance (Pod): <span id="instance">-</span></div>
+          <div class="small">Server-Zeit: <span id="time">-</span></div>
+          <div class="footer">
+            Diese Werte kommen direkt vom Backend (/api/info).
+          </div>
+        </section>
+      </div>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>Aktivitäten</h2>
+
+        <ul id="activityList" class="list"></ul>
+
+        <div class="row">
+          <input id="activityInput" type="text" placeholder="Neue Aktivität eingeben..." />
+          <button id="addBtn">Hinzufügen</button>
+        </div>
+
+        <p class="hint">Hinweis: Die Liste ist nur im Browser gespeichert (Demo).</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenShift Tests</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <div class="headerTop">
+        <div>
+          <h1 class="title">Unsere OpenShift Tests</h1>
+          <p class="subtitle">
+            Kurze Übersicht der wichtigsten Versuche mit unserer Demo-Anwendung im OpenShift Cluster.
+          </p>
+        </div>
+
+        <nav class="nav">
+          <a href="/">Dashboard</a>
+          <a href="/tests.html">Tests</a>
+          <a href="/about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="box">
+        <h2>1) Deployment und Route</h2>
+        <p class="small">
+          Wir haben die Anwendung als Deployment gestartet und über eine Route im Browser erreichbar gemacht.
+          So konnten wir direkt prüfen, dass der Container im Cluster läuft.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>2) Skalierung und Self Healing</h2>
+        <p class="small">
+          Wir haben die Pod-Anzahl erhöht und anschließend Pods gelöscht.
+          OpenShift hat automatisch neue Pods gestartet, damit die gewünschte Anzahl wieder erreicht wird.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>3) Rolling Update</h2>
+        <p class="small">
+          Wir haben eine Änderung am Deployment vorgenommen (z. B. Version als Umgebungsvariable).
+          OpenShift hat die Pods nach und nach ersetzt, ohne dass die Anwendung komplett ausfällt.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>4) Ressourcen (CPU / RAM)</h2>
+        <p class="small">
+          Im Deployment haben wir CPU- und Speicherwerte gesetzt.
+          Dadurch kann OpenShift die Anwendung stabil einplanen und ausführen.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>5) HPA Autoscaling (optional)</h2>
+        <p class="small">
+          Optional haben wir einen Horizontal Pod Autoscaler konfiguriert.
+          Bei Last kann OpenShift die Anzahl der Pods automatisch erhöhen.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>6) Image Trigger (optional)</h2>
+        <p class="small">
+          Wir haben getestet, was bei einer Image-Änderung im Deployment passiert.
+          Über Image Trigger kann OpenShift die Umgebung konsistent halten.
+        </p>
+      </section>
+
+      <p class="hint" style="margin-top:14px;">
+        <a href="/">Zurück zum Dashboard</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenShift als PaaS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <div class="headerTop">
+        <div>
+          <h1 class="title">OpenShift als Platform as a Service</h1>
+          <p class="subtitle">
+            Kurz erklärt, warum OpenShift in unserem Projekt als PaaS funktioniert.
+          </p>
+        </div>
+
+        <nav class="nav">
+          <a href="/">Dashboard</a>
+          <a href="/tests.html">Tests</a>
+          <a href="/about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="box">
+        <h2>Was bedeutet PaaS hier?</h2>
+        <p class="small">
+          Für uns ist OpenShift die Plattform zwischen Infrastruktur und Anwendung.
+          Wir müssen keine einzelnen Server manuell verwalten, sondern definieren nur, wie unsere Anwendung laufen soll:
+          als Deployment mit Pods, mit bestimmten Einstellungen und über eine Route erreichbar.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>Was übernimmt OpenShift für uns?</h2>
+        <p class="small">
+          OpenShift startet Container, ersetzt Pods bei Fehlern automatisch, verteilt Workloads im Cluster
+          und führt Updates kontrolliert aus.
+          Dadurch können wir uns auf die Anwendung und die Konfiguration konzentrieren.
+        </p>
+      </section>
+
+      <section class="box" style="margin-top:14px;">
+        <h2>Warum ist unsere Demo sinnvoll?</h2>
+        <p class="small">
+          Unsere Website zeigt live Informationen aus dem laufenden Container (z. B. Version und Instance/Pod).
+          In OpenShift kann man damit Skalierung und Updates direkt sichtbar machen.
+        </p>
+      </section>
+
+      <p class="hint" style="margin-top:14px;">
+        <a href="/">Zurück zum Dashboard</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

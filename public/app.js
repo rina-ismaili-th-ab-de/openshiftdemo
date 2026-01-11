@@ -1,6 +1,6 @@
 let lastPod = null;
-const podsSeen = new Set();
-let switchCount = 0;
+let lastVersion = null;
+let lastUptime = null;
 
 function setDot(id, state){
   const el = document.getElementById(id);
@@ -15,6 +15,19 @@ function setText(id, text){
   if(el) el.textContent = text;
 }
 
+function niceUptime(seconds){
+  const s = Number(seconds);
+  if(!Number.isFinite(s)) return "–";
+
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = Math.floor(s % 60);
+
+  if(h > 0) return `${h} h ${m} min ${sec} s`;
+  if(m > 0) return `${m} min ${sec} s`;
+  return `${sec} s`;
+}
+
 async function loadInfo(){
   setDot("dotStatus", "warn");
   setText("txtStatus", "Lade Live-Daten…");
@@ -25,70 +38,74 @@ async function loadInfo(){
 
     const data = await res.json();
 
-    // passt zu deinem aktuellen Backend (Screenshot):
+    // Diese Felder liefert dein server.js jetzt:
     const version = data.version ?? "v1";
-    const pod = data.instance ?? data.podName ?? data.pod ?? data.hostname ?? "unbekannt";
-    const time = data.serverTime ?? data.time ?? new Date().toISOString();
+    const pod = data.podName ?? data.instance ?? "unbekannt";
+    const ns = data.namespace ?? "unknown";
+    const node = data.nodeName ?? "unknown";
+    const uptimeSec = data.uptimeSec ?? null;
+    const req = data.requestCount ?? null;
+    const time = data.serverTime ?? new Date().toISOString();
 
+    // Werte anzeigen
     setText("vRoute", window.location.origin);
     setText("vVersion", String(version));
     setText("vPod", String(pod));
+    setText("vNs", String(ns));
+    setText("vNode", String(node));
+    setText("vUptime", niceUptime(uptimeSec));
+    setText("vReq", req === null ? "–" : String(req));
     setText("vTime", String(time));
 
-    // Pod-Wechsel-Logik (für Skalierungs-Nachweis)
-    podsSeen.add(String(pod));
-    setText("vPodsSeen", `${podsSeen.size} ( ${Array.from(podsSeen).join(", ")} )`);
+    setDot("dotStatus", "ok");
+    setText("txtStatus", "OK: App läuft (Live-Daten aus dem Pod geladen)");
+
+    // SUPER EINFACHE Erklärung (für jeden verständlich)
+    // 1) Pod-Wechsel = Verteilung bei 2 Pods
+    // 2) Uptime wird klein = Pod neu gestartet (Self-Healing/Restart)
+    // 3) Version geändert = Update/Rollout
+    let explain = "";
 
     if(lastPod === null){
-      lastPod = String(pod);
-      setText("vPodSwitch", "Noch kein Vergleich (erste Messung)");
-      setDot("dotTest", "warn");
-      setText("txtTest", "Tipp: Skaliere auf 2 Pods und lade mehrmals neu.");
-    } else if(String(pod) !== lastPod){
-      switchCount++;
-      lastPod = String(pod);
-      setText("vPodSwitch", `JA ✅ (Wechsel erkannt: ${switchCount}x)`);
-      setDot("dotTest", "ok");
-      setText("txtTest", "Sehr gut: Pod wechselt → OpenShift verteilt Aufrufe auf mehrere Pods.");
+      explain = "Erster Check. Tipp: Stelle in OpenShift 2 Pods ein und lade die Seite mehrmals neu.";
+      setDot("dotExplain", "warn");
     } else {
-      setText("vPodSwitch", `Noch nicht (Wechsel erkannt: ${switchCount}x)`);
-      setDot("dotTest", "warn");
-      setText("txtTest", "Noch gleicher Pod. Lade öfter neu oder stelle Replicas auf 2.");
+      if(pod !== lastPod){
+        explain += "Pod hat gewechselt → OpenShift verteilt Aufrufe auf mehrere Pods. ";
+      }
+
+      if(lastUptime !== null && uptimeSec !== null && Number(uptimeSec) < Number(lastUptime) - 3){
+        explain += "Uptime ist kleiner geworden → Pod wurde neu gestartet (z.B. Restart/Self-Healing). ";
+      }
+
+      if(lastVersion !== null && version !== lastVersion){
+        explain += "Version hat sich geändert → Update wurde ausgerollt (neue Version läuft). ";
+      }
+
+      if(explain === ""){
+        explain = "Alles stabil. Wenn du einen Effekt sehen willst: Skaliere auf 2 Pods oder ändere die Version.";
+      }
+
+      setDot("dotExplain", "ok");
     }
 
-    setDot("dotStatus", "ok");
-    setText("txtStatus", "OK: Live-Daten geladen (App läuft im Cluster)");
-  } catch(e){
+    setText("txtExplain", explain);
+
+    // Merken für Vergleich beim nächsten Laden
+    lastPod = pod;
+    lastVersion = version;
+    lastUptime = uptimeSec;
+
+  }catch(e){
     setDot("dotStatus", "bad");
-    setText("txtStatus", "Fehler: Live-Daten konnten nicht geladen werden");
-    setDot("dotTest", "bad");
-    setText("txtTest", "Bitte Pod/Route prüfen. Fehler: " + (e?.message ?? e));
+    setText("txtStatus", "Fehler: Live-Daten nicht erreichbar");
+    setDot("dotExplain", "bad");
+    setText("txtExplain", "Bitte Route/Pod prüfen. Fehler: " + (e.message ?? e));
   }
-}
-
-function setupActivities(){
-  const list = document.getElementById("activityList");
-  const input = document.getElementById("activityInput");
-  const btn = document.getElementById("activityBtn");
-
-  btn.addEventListener("click", () => {
-    const t = input.value.trim();
-    if(!t) return;
-    const li = document.createElement("li");
-    li.textContent = t;
-    list.appendChild(li);
-    input.value = "";
-    input.focus();
-  });
-
-  input.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") btn.click();
-  });
 }
 
 document.getElementById("btnRefresh").addEventListener("click", loadInfo);
 
-setupActivities();
 loadInfo();
 setInterval(loadInfo, 3000);
 

@@ -1,152 +1,192 @@
-* { box-sizing: border-box; }
-
 :root{
-  --bg: #f4f6fb;
-  --card: #ffffff;
-  --text: #111827;
-  --muted: #4b5563;
-  --border: #e6e8ef;
-  --shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  padding: 24px;
-}
-
-.card {
-  max-width: 860px;
-  margin: 0 auto;
-  background: var(--card);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.header {
-  padding: 18px 22px;
-  background: #0b5cff;
-  color: white;
-}
-
-.headerTop{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.title {
-  margin: 0;
-  font-size: 1.35rem;
-  letter-spacing: 0.2px;
-}
-
-.subtitle{
-  margin: 6px 0 0;
-  opacity: 0.9;
-  line-height: 1.35;
-  font-size: 0.98rem;
-}
-
-.nav {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.nav a{
-  color: white;
-  text-decoration: none;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.14);
-}
-
-.nav a:hover{
-  background: rgba(255,255,255,0.22);
-}
-
-.content{
-  padding: 18px 22px 22px;
-}
-
-.grid{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-@media (max-width: 720px){
-  .grid{ grid-template-columns: 1fr; }
-}
-
-.box {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  background: #fff;
-}
-
-.box h2{
-  margin: 0 0 10px;
-  font-size: 1.05rem;
-}
-
-.list {
-  margin: 10px 0 12px;
-  padding-left: 18px;
-  color: var(--text);
-}
-
-.row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-input {
-  flex: 1;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid #cfd6e4;
-  outline: none;
-}
-
-button {
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 0;
-  cursor: pointer;
-  background: #111827;
-  color: white;
-}
-
-button:hover{
-  opacity: 0.92;
-}
-
-.hint {
-  margin: 10px 0 0;
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.35;
-}
-
-.small{
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.footer{
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#475569;
+    --line:#e2e8f0;
+    --accent:#2563eb;
+    --accent2:#1d4ed8;
+    --ok:#16a34a;
+    --warn:#f59e0b;
+    --bad:#dc2626;
+    --shadow: 0 10px 30px rgba(2,6,23,.08);
+  }
+  
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.55;
+  }
+  
+  .container{
+    max-width:1100px;
+    margin:0 auto;
+    padding:28px 18px 40px;
+  }
+  
+  .header{
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#fff;
+    border-radius:18px;
+    padding:22px 22px;
+    box-shadow: var(--shadow);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  
+  .header h1{
+    margin:0;
+    font-size:30px;
+    letter-spacing:.2px;
+  }
+  .header p{
+    margin:6px 0 0;
+    color: rgba(255,255,255,.92);
+    max-width:720px;
+  }
+  
+  .nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .nav a, .nav button{
+    border:0;
+    text-decoration:none;
+    cursor:pointer;
+    background: rgba(255,255,255,.14);
+    color:#fff;
+    padding:10px 14px;
+    border-radius:999px;
+    font-weight:600;
+    transition: transform .08s ease, background .2s ease;
+  }
+  .nav a:hover, .nav button:hover{
+    background: rgba(255,255,255,.22);
+  }
+  .nav a:active, .nav button:active{
+    transform: scale(0.98);
+  }
+  
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width: 900px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+  
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px 18px;
+    box-shadow: 0 6px 18px rgba(2,6,23,.05);
+  }
+  
+  .card h2{
+    margin:0 0 10px;
+    font-size:18px;
+  }
+  .p{ margin:8px 0; color:var(--muted); }
+  
+  .small{
+    font-size:13px;
+    color:var(--muted);
+  }
+  
+  .hr{
+    height:1px;
+    background:var(--line);
+    margin:12px 0;
+  }
+  
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:13px;
+    border:1px solid var(--line);
+    background:#f8fafc;
+  }
+  .dot{
+    width:10px; height:10px; border-radius:50%;
+    background: var(--ok);
+  }
+  .dot.warn{ background: var(--warn); }
+  .dot.bad{ background: var(--bad); }
+  
+  .kv{
+    display:grid;
+    grid-template-columns: 220px 1fr;
+    gap:10px 12px;
+    margin-top:10px;
+  }
+  @media (max-width: 520px){
+    .kv{ grid-template-columns: 1fr; }
+  }
+  .k{
+    color: var(--muted);
+    font-weight:700;
+  }
+  .v{
+    background:#f8fafc;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size:13px;
+    overflow:auto;
+  }
+  
+  .list{
+    margin:10px 0 0;
+    padding-left:18px;
+    color:var(--muted);
+  }
+  .list li{ margin:6px 0; }
+  
+  .activity{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-top:10px;
+  }
+  .activity input{
+    flex:1;
+    padding:12px 12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    outline:none;
+    font-size:14px;
+  }
+  .activity button{
+    padding:12px 16px;
+    border-radius:12px;
+    border:1px solid #0b1220;
+    background:#0b1220;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .activity button:active{ transform:scale(.99); }
+  
+  .footerNote{
+    margin-top:12px;
+    color:var(--muted);
+    font-size:13px;
+  }
+  

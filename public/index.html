@@ -13,7 +13,7 @@
         <h1>OpenShift PaaS Demo</h1>
         <p>
           Team: Rina Ismaili und Alma Dacik.
-          Diese App läuft als Container in OpenShift. Die Live-Box zeigt dir, welcher Pod gerade antwortet.
+          Diese Seite zeigt live: Die App läuft wirklich in OpenShift (Pods + Route) und liefert echte Daten aus dem Cluster.
         </p>
       </div>
 
@@ -27,27 +27,30 @@
 
     <div class="grid">
       <div class="card">
-        <h2>OpenShift kurz & einfach</h2>
-        <p class="p">
-          Damit dein Prof sofort sieht, was hier passiert:
-        </p>
+        <h2>Was bedeutet das hier ganz einfach?</h2>
+
         <ul class="list">
-          <li>Deployment: sagt OpenShift, wie die App laufen soll (z.B. 1 oder 2 Pods).</li>
-          <li>Pod: eine laufende Instanz deiner App (du siehst gleich den Pod-Namen).</li>
-          <li>Route: die Internet-Adresse, über die du die App im Browser öffnest.</li>
-          <li>Skalierung: mehr Pods = OpenShift verteilt die Aufrufe auf mehrere Pods.</li>
-          <li>Update: neuer Git-Push → neues Image → OpenShift rollt die neue Version aus.</li>
+          <li>OpenShift ist wie ein „App-Manager“ für Container.</li>
+          <li>Du sagst: „Meine App soll laufen“ – OpenShift startet sie automatisch.</li>
+          <li>Die App läuft in sogenannten Pods (das sind laufende App-Instanzen).</li>
+          <li>Über eine Route bekommst du einen Link, den du im Browser öffnen kannst.</li>
         </ul>
 
         <div class="hr"></div>
+
+        <p class="p">
+          Wichtig für unseren Prof: Die Werte rechts kommen live aus dem laufenden Pod.
+          Damit sieht man eindeutig: Das ist nicht nur eine statische Webseite, sondern eine App im Cluster.
+        </p>
+
         <p class="small">
-          Wichtig: Der Pod-Name ist der Live-Beweis. Wenn bei 2 Pods der Pod-Name beim Neuladen wechselt,
-          dann siehst du die Verteilung (Load Balancing).
+          Wenn du 2 Pods einstellst und öfter neu lädst, kann der Pod-Name wechseln.
+          Das ist normal und zeigt, dass OpenShift die Anfragen verteilt.
         </p>
       </div>
 
       <div class="card">
-        <h2>Live-Beweis aus OpenShift</h2>
+        <h2>Live-Beweis (direkt aus OpenShift)</h2>
 
         <div class="badge" style="margin-bottom:10px;">
           <span class="dot warn" id="dotStatus"></span>
@@ -55,67 +58,77 @@
         </div>
 
         <div class="kv">
-          <div class="k">Route (deine URL)</div>
+          <div class="k">Dein Link (Route)</div>
           <div class="v" id="vRoute">–</div>
 
-          <div class="k">Version (aus der App)</div>
+          <div class="k">Version der App</div>
           <div class="v" id="vVersion">–</div>
 
-          <div class="k">Pod-Name (wer antwortet?)</div>
+          <div class="k">Pod (wer antwortet gerade?)</div>
           <div class="v" id="vPod">–</div>
+
+          <div class="k">Projekt/Namespace (wo läuft es?)</div>
+          <div class="v" id="vNs">–</div>
+
+          <div class="k">Node (auf welcher Maschine?)</div>
+          <div class="v" id="vNode">–</div>
+
+          <div class="k">Läuft seit (Uptime)</div>
+          <div class="v" id="vUptime">–</div>
+
+          <div class="k">Aufrufe auf /api/info</div>
+          <div class="v" id="vReq">–</div>
 
           <div class="k">Server-Zeit</div>
           <div class="v" id="vTime">–</div>
+        </div>
 
-          <div class="k">Pods gesehen (seit du offen hast)</div>
-          <div class="v" id="vPodsSeen">–</div>
+        <div class="hr"></div>
 
-          <div class="k">Pod-Wechsel erkannt?</div>
-          <div class="v" id="vPodSwitch">–</div>
+        <h3 style="margin: 0 0 8px;">Load-Balancing Test (zeigt mehrere Pods)</h3>
+        <p class="small" style="margin-top:0;">
+          Wir schicken 30 kurze Anfragen an <code>/api/info</code>.
+          Wenn in OpenShift 2 Pods laufen, sollten hier meistens 2 unterschiedliche Pod-Namen auftauchen (mit Anzahl der Antworten).
+        </p>
+
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0;">
+          <button id="btnBurst" type="button">30 Requests starten</button>
+          <span class="small" id="burstHint">
+            Tipp: Wenn du nur 1 Pod siehst, nochmal klicken oder kurz neu laden.
+          </span>
+        </div>
+
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">Antworten pro Pod (Beweis für Verteilung)</div>
+          <div class="v" id="vBurst">–</div>
         </div>
 
         <div class="hr"></div>
 
         <div class="badge">
-          <span class="dot warn" id="dotTest"></span>
-          <span id="txtTest">Test-Hinweis wird geladen…</span>
+          <span class="dot warn" id="dotExplain"></span>
+          <span id="txtExplain">Erklärung wird geladen…</span>
         </div>
 
         <p class="small" style="margin-top:10px;">
-          So wird es im Bericht perfekt: Screenshot von dieser Box, wo man Pod-Name und Version sieht.
+          Merksatz: Pod-Name + Namespace + Uptime = „Das ist ein laufender Container in OpenShift“.
         </p>
       </div>
     </div>
 
     <div class="card" style="margin-top:16px;">
-      <h2>So zeigst du es dem Prof (in 60 Sekunden)</h2>
+      <h2>So zeigst du es dem Prof (sehr klar)</h2>
+
       <ul class="list">
-        <li>1) Diese Seite öffnen → du siehst den Pod-Namen.</li>
+        <li>1) Seite öffnen: Du siehst Pod + Namespace + Uptime.</li>
         <li>2) In OpenShift Replicas von 1 auf 2 stellen.</li>
-        <li>3) Hier 5–10x neu laden → wenn der Pod-Name wechselt, ist die Verteilung sichtbar.</li>
-        <li>4) Eine kleine Änderung pushen (z.B. Text/Version) → OpenShift baut neu und rollt aus.</li>
-        <li>5) Optional: einen Pod löschen → OpenShift startet automatisch einen neuen (Self-Healing).</li>
+        <li>3) Hier 30 Requests starten: Wenn 2 Pods erscheinen, ist Load-Balancing sichtbar.</li>
+        <li>4) APP_VERSION von v1 auf v2 ändern (oder Git push) → neue Version wird ausgerollt.</li>
+        <li>5) Optional: Einen Pod löschen → OpenShift startet automatisch einen neuen (Self-Healing).</li>
       </ul>
-      <p class="small">
-        Die Seite erklärt alles absichtlich in einfacher Sprache, damit jeder versteht, was OpenShift gerade macht.
-      </p>
-    </div>
-
-    <div class="card" style="margin-top:16px;">
-      <h2>Aktivitäten (kurz)</h2>
-      <ul class="list" id="activityList">
-        <li>Code auf GitHub</li>
-        <li>Build in OpenShift</li>
-        <li>Deployment + Route</li>
-      </ul>
-
-      <div class="activity">
-        <input id="activityInput" placeholder="Neue Zeile hinzufügen…" />
-        <button id="activityBtn" type="button">Hinzufügen</button>
-      </div>
 
       <div class="footerNote">
-        Hinweis: Die Liste ist nur für deine Demo/Notizen.
+        Tipp: Mach 2 Screenshots: (a) Live-Beweis + Load-Balancing-Box, (b) OpenShift Deployment mit 2 Replicas.
       </div>
     </div>
   </div>
@@ -123,5 +136,7 @@
   <script src="/app.js"></script>
 </body>
 </html>
+
+
 
 

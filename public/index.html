@@ -2,72 +2,126 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>OpenShift PaaS Demo</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <main class="card">
-    <header class="header">
-      <div class="headerTop">
-        <div>
-          <h1 class="title">OpenShift PaaS Demo</h1>
-          <p class="subtitle">
-            Mini-Anwendung, die als Deployment in OpenShift läuft und über eine Route erreichbar ist.
-          </p>
-        </div>
-
-        <nav class="nav">
-          <a href="/">Dashboard</a>
-          <a href="/tests.html">Tests</a>
-          <a href="/about.html">About</a>
-        </nav>
-      </div>
-    </header>
-
-    <div class="content">
-      <div class="grid">
-        <section class="box">
-          <h2>Projektinfo</h2>
-          <p class="small">
-            Diese Demo zeigt eine Web-App, die wir in Red Hat OpenShift als Deployment betreiben und über eine Route im Browser erreichen.
-          </p>
-          <p class="small">
-            Team: Rina Ismaili und Alma Dacik<br>
-            OpenShift Projekt: rina-ismaili-th-ab-d-dev
-          </p>
-          <p class="hint">
-            Tipp: Wenn wir später auf 2 Pods skalieren, kann man beim Neuladen unterschiedliche “Instance (Pod)” sehen.
-          </p>
-        </section>
-
-        <section class="box">
-          <h2>Status aus dem Container</h2>
-          <div class="small">Version: <span id="version">-</span></div>
-          <div class="small">Instance (Pod): <span id="instance">-</span></div>
-          <div class="small">Server-Zeit: <span id="time">-</span></div>
-          <div class="footer">
-            Diese Werte kommen direkt vom Backend (/api/info).
-          </div>
-        </section>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>OpenShift PaaS Demo</h1>
+        <p>
+          Team: Rina Ismaili und Alma Dacik.
+          Diese App läuft als Container in OpenShift. Die Live-Box zeigt dir, welcher Pod gerade antwortet.
+        </p>
       </div>
 
-      <section class="box" style="margin-top:14px;">
-        <h2>Aktivitäten</h2>
-
-        <ul id="activityList" class="list"></ul>
-
-        <div class="row">
-          <input id="activityInput" type="text" placeholder="Neue Aktivität eingeben..." />
-          <button id="addBtn">Hinzufügen</button>
-        </div>
-
-        <p class="hint">Hinweis: Die Liste ist nur im Browser gespeichert (Demo).</p>
-      </section>
+      <div class="nav">
+        <a href="/">Start</a>
+        <a href="/tests.html">Tests</a>
+        <a href="/about.html">Kurz erklärt</a>
+        <button id="btnRefresh" type="button">Neu laden</button>
+      </div>
     </div>
-  </main>
 
-  <script src="app.js"></script>
+    <div class="grid">
+      <div class="card">
+        <h2>OpenShift kurz & einfach</h2>
+        <p class="p">
+          Damit dein Prof sofort sieht, was hier passiert:
+        </p>
+        <ul class="list">
+          <li>Deployment: sagt OpenShift, wie die App laufen soll (z.B. 1 oder 2 Pods).</li>
+          <li>Pod: eine laufende Instanz deiner App (du siehst gleich den Pod-Namen).</li>
+          <li>Route: die Internet-Adresse, über die du die App im Browser öffnest.</li>
+          <li>Skalierung: mehr Pods = OpenShift verteilt die Aufrufe auf mehrere Pods.</li>
+          <li>Update: neuer Git-Push → neues Image → OpenShift rollt die neue Version aus.</li>
+        </ul>
+
+        <div class="hr"></div>
+        <p class="small">
+          Wichtig: Der Pod-Name ist der Live-Beweis. Wenn bei 2 Pods der Pod-Name beim Neuladen wechselt,
+          dann siehst du die Verteilung (Load Balancing).
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Live-Beweis aus OpenShift</h2>
+
+        <div class="badge" style="margin-bottom:10px;">
+          <span class="dot warn" id="dotStatus"></span>
+          <span id="txtStatus">Lade Live-Daten…</span>
+        </div>
+
+        <div class="kv">
+          <div class="k">Route (deine URL)</div>
+          <div class="v" id="vRoute">–</div>
+
+          <div class="k">Version (aus der App)</div>
+          <div class="v" id="vVersion">–</div>
+
+          <div class="k">Pod-Name (wer antwortet?)</div>
+          <div class="v" id="vPod">–</div>
+
+          <div class="k">Server-Zeit</div>
+          <div class="v" id="vTime">–</div>
+
+          <div class="k">Pods gesehen (seit du offen hast)</div>
+          <div class="v" id="vPodsSeen">–</div>
+
+          <div class="k">Pod-Wechsel erkannt?</div>
+          <div class="v" id="vPodSwitch">–</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="badge">
+          <span class="dot warn" id="dotTest"></span>
+          <span id="txtTest">Test-Hinweis wird geladen…</span>
+        </div>
+
+        <p class="small" style="margin-top:10px;">
+          So wird es im Bericht perfekt: Screenshot von dieser Box, wo man Pod-Name und Version sieht.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h2>So zeigst du es dem Prof (in 60 Sekunden)</h2>
+      <ul class="list">
+        <li>1) Diese Seite öffnen → du siehst den Pod-Namen.</li>
+        <li>2) In OpenShift Replicas von 1 auf 2 stellen.</li>
+        <li>3) Hier 5–10x neu laden → wenn der Pod-Name wechselt, ist die Verteilung sichtbar.</li>
+        <li>4) Eine kleine Änderung pushen (z.B. Text/Version) → OpenShift baut neu und rollt aus.</li>
+        <li>5) Optional: einen Pod löschen → OpenShift startet automatisch einen neuen (Self-Healing).</li>
+      </ul>
+      <p class="small">
+        Die Seite erklärt alles absichtlich in einfacher Sprache, damit jeder versteht, was OpenShift gerade macht.
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h2>Aktivitäten (kurz)</h2>
+      <ul class="list" id="activityList">
+        <li>Code auf GitHub</li>
+        <li>Build in OpenShift</li>
+        <li>Deployment + Route</li>
+      </ul>
+
+      <div class="activity">
+        <input id="activityInput" placeholder="Neue Zeile hinzufügen…" />
+        <button id="activityBtn" type="button">Hinzufügen</button>
+      </div>
+
+      <div class="footerNote">
+        Hinweis: Die Liste ist nur für deine Demo/Notizen.
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
 </body>
 </html>
+
 

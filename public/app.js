@@ -1,174 +1,217 @@
-// public/app.js
+const el = (id) => document.getElementById(id);
 
-function $(id) {
-  return document.getElementById(id);
-}
+const dotStatus = el("dotStatus");
+const txtStatus = el("txtStatus");
+const dotExplain = el("dotExplain");
+const txtExplain = el("txtExplain");
 
-function setDot(dotEl, state) {
-  if (!dotEl) return;
-  dotEl.classList.remove("ok", "warn", "err");
-  // wir nutzen die vorhandene "warn" Klasse als Standard
-  if (state === "ok") dotEl.classList.add("ok");
-  else if (state === "err") dotEl.classList.add("err");
-  else dotEl.classList.add("warn");
-}
+const vRoute = el("vRoute");
+const vVersion = el("vVersion");
+const vPod = el("vPod");
+const vNs = el("vNs");
+const vNode = el("vNode");
+const vUptime = el("vUptime");
+const vReq = el("vReq");
+const vTime = el("vTime");
+const vPodsSeen = el("vPodsSeen");
+const vPodSwitch = el("vPodSwitch");
 
-function setText(el, text) {
-  if (!el) return;
-  el.textContent = text ?? "–";
-}
+const btnRefresh = el("btnRefresh");
 
-function formatUptime(seconds) {
-  const s = Number(seconds);
-  if (!Number.isFinite(s) || s < 0) return "–";
+const LS_PODS = "osdemo_pods_seen";
+const LS_COUNTS = "osdemo_pod_counts";
+const LS_LAST = "osdemo_last_pod";
 
-  const d = Math.floor(s / 86400);
-  const h = Math.floor((s % 86400) / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = Math.floor(s % 60);
-
-  if (d > 0) return `${d}d ${h}h ${m}m`;
-  if (h > 0) return `${h}h ${m}m ${sec}s`;
-  if (m > 0) return `${m}m ${sec}s`;
-  return `${sec}s`;
-}
-
-function pick(obj, keys, fallback = "–") {
-  for (const k of keys) {
-    if (obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== "") {
-      return obj[k];
-    }
-  }
-  return fallback;
-}
-
-async function fetchInfo(extraQuery = "") {
-  // cache:no-store, damit wirklich neu geholt wird
-  const url = `/api/info${extraQuery ? `?${extraQuery}` : ""}`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
-}
-
-function updateRoute() {
-  const route = window.location.origin;
-  setText($("vRoute"), route);
-}
-
-function updateUIFromInfo(info) {
-  const version = pick(info, ["version", "appVersion", "APP_VERSION"]);
-  const pod = pick(info, ["podName", "pod", "instance", "hostname"]);
-  const ns = pick(info, ["namespace", "ns", "project"]);
-  const node = pick(info, ["nodeName", "node"]);
-  const serverTime = pick(info, ["serverTime", "time", "now"]);
-  const uptime = pick(info, ["uptimeSeconds", "uptime", "uptime_s"]);
-  const req = pick(info, ["requestCount", "requests", "count"]);
-
-  setText($("vVersion"), String(version));
-  setText($("vPod"), String(pod));
-  setText($("vNs"), String(ns));
-  setText($("vNode"), String(node));
-  setText($("vTime"), String(serverTime));
-
-  // Uptime hübsch
-  const niceUptime = (uptime === "–") ? "–" : formatUptime(uptime);
-  setText($("vUptime"), niceUptime);
-
-  // Requests
-  setText($("vReq"), String(req));
-
-  // Status oben
-  setDot($("dotStatus"), "ok");
-  setText($("txtStatus"), "OK: App läuft (Live-Daten kommen aus einem Pod)");
-
-  // Erklärung Badge
-  const explain =
-    `Kurz gesagt: Wenn hier ein Pod-Name steht, kommt die Antwort wirklich aus dem Container.\n` +
-    `Wenn du Replicas auf 2 stellst und mehrfach neu lädst oder „Pods sammeln“ klickst, solltest du verschiedene Pod-Namen sehen.`;
-
-  setDot($("dotExplain"), "ok");
-  setText($("txtExplain"), explain);
-}
-
-async function loadOnce() {
-  updateRoute();
-
+function loadJson(key, fallback) {
   try {
-    const info = await fetchInfo(`t=${Date.now()}`);
-    updateUIFromInfo(info);
-  } catch (e) {
-    setDot($("dotStatus"), "err");
-    setText($("txtStatus"), "Hmm… ich konnte gerade keine Live-Daten laden. Check mal, ob /api/info erreichbar ist.");
-    setDot($("dotExplain"), "warn");
-    setText($("txtExplain"), "Wenn das öfter passiert: In OpenShift in die Pod-Logs schauen (Backend) und Route testen.");
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
   }
 }
 
-async function samplePods(times = 20) {
-  const btn = $("btnSamplePods");
-  const dot = $("dotSample");
-  const txt = $("txtSample");
+function saveJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
-  const outCount = $("vPodCount");
-  const outLast = $("vPodLast");
-  const outList = $("vPodList");
+function setDot(dot, type) {
+  if (!dot) return;
+  dot.classList.remove("ok", "warn");
+  dot.classList.add(type);
+}
 
-  if (btn) btn.disabled = true;
-  setDot(dot, "warn");
-  setText(txt, `Sammle gerade Antworten… (0/${times})`);
+function setStatusOk(text) {
+  setDot(dotStatus, "ok");
+  if (txtStatus) txtStatus.textContent = text;
+}
 
-  const pods = new Set();
-  let lastPod = "–";
+function setStatusWarn(text) {
+  setDot(dotStatus, "warn");
+  if (txtStatus) txtStatus.textContent = text;
+}
 
-  for (let i = 1; i <= times; i++) {
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function fetchInfo() {
+  // Cache-Buster, damit wirklich neu geholt wird
+  const url = `/api/info?t=${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function updatePodsMemory(podName) {
+  const pods = new Set(loadJson(LS_PODS, []));
+  const counts = loadJson(LS_COUNTS, {});
+
+  if (podName) {
+    pods.add(podName);
+    counts[podName] = (counts[podName] || 0) + 1;
+  }
+
+  saveJson(LS_PODS, Array.from(pods));
+  saveJson(LS_COUNTS, counts);
+
+  return { pods: Array.from(pods), counts };
+}
+
+function renderPodsSeen(counts) {
+  const entries = Object.entries(counts || {});
+  if (entries.length === 0) {
+    if (vPodsSeen) vPodsSeen.textContent = "–";
+    return;
+  }
+
+  // sort: häufigster zuerst
+  entries.sort((a, b) => b[1] - a[1]);
+
+  const lines = entries.map(([pod, c]) => `${pod} (${c}x)`);
+
+  if (vPodsSeen) {
+    vPodsSeen.innerHTML = `${entries.length} Pod(s):<br>${lines.join("<br>")}`;
+  }
+}
+
+function renderPodSwitch(currentPod) {
+  const last = localStorage.getItem(LS_LAST);
+
+  if (!last) {
+    if (vPodSwitch) vPodSwitch.textContent = "–";
+    localStorage.setItem(LS_LAST, currentPod || "");
+    return;
+  }
+
+  if (!currentPod) {
+    if (vPodSwitch) vPodSwitch.textContent = "–";
+    return;
+  }
+
+  if (last !== currentPod) {
+    if (vPodSwitch) vPodSwitch.textContent = `Ja: ${last} → ${currentPod}`;
+  } else {
+    if (vPodSwitch) vPodSwitch.textContent = "Noch nicht (ein paar Mal neu laden)";
+  }
+
+  localStorage.setItem(LS_LAST, currentPod);
+}
+
+function prettyUptime(seconds) {
+  if (seconds == null) return "–";
+  const s = Number(seconds);
+  if (Number.isNaN(s)) return "–";
+  if (s < 60) return `${s} s`;
+
+  const min = Math.floor(s / 60);
+  const rest = s % 60;
+  if (min < 60) return `${min} min ${rest} s`;
+
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return `${h} h ${m} min`;
+}
+
+async function refreshOnce() {
+  const info = await fetchInfo();
+
+  if (vRoute) vRoute.textContent = window.location.href;
+  if (vVersion) vVersion.textContent = info.version || "–";
+  if (vPod) vPod.textContent = info.podName || "–";
+  if (vNs) vNs.textContent = info.namespace || "–";
+  if (vNode) vNode.textContent = info.nodeName || "–";
+  if (vUptime) vUptime.textContent = prettyUptime(info.uptimeSeconds);
+  if (vReq) vReq.textContent = info.requestCount != null ? String(info.requestCount) : "–";
+  if (vTime) vTime.textContent = info.serverTime || "–";
+
+  const mem = updatePodsMemory(info.podName);
+  renderPodsSeen(mem.counts);
+  renderPodSwitch(info.podName);
+
+  setStatusOk("OK: App läuft (Live-Daten kommen aus einem Pod)");
+
+  return mem;
+}
+
+async function runPodSampler() {
+  // kleine “Beweis”-Routine: sammelt automatisch mehrere Antworten
+  if (txtExplain) txtExplain.textContent = "Mini-Test läuft: Wir sammeln gerade mehrere Antworten, um alle Pods zu sehen…";
+  setDot(dotExplain, "warn");
+
+  let mem = { pods: [], counts: {} };
+
+  // 12 Requests reichen meist für 2 Pods
+  for (let i = 0; i < 12; i++) {
     try {
-      const info = await fetchInfo(`sample=${Date.now()}_${i}`);
-      const pod = pick(info, ["podName", "pod", "instance", "hostname"], "–");
-      lastPod = String(pod);
+      mem = await refreshOnce();
+    } catch {
+      // ignorieren, wir versuchen weiter
+    }
+    await sleep(700);
+  }
 
-      if (lastPod !== "–") pods.add(lastPod);
+  const found = mem.pods.length;
 
-      // Live UI
-      setText(outCount, `${pods.size}`);
-      setText(outLast, lastPod);
-      setText(outList, pods.size ? Array.from(pods).sort().join("\n") : "–");
-      setText(txt, `Sammle gerade Antworten… (${i}/${times})`);
-    } catch (e) {
-      // wenn 1 Request failt, machen wir trotzdem weiter
-      setText(txt, `Sammle gerade Antworten… (${i}/${times}) (ein Request hat nicht geklappt)`);
+  if (txtExplain) {
+    if (found >= 2) {
+      txtExplain.textContent = `Fertig: Wir haben ${found} Pods gesehen. Das zeigt, dass OpenShift die Aufrufe verteilt (Load-Balancing).`;
+      setDot(dotExplain, "ok");
+    } else {
+      txtExplain.textContent = `Wir haben bisher nur ${found} Pod gesehen. Tipp: nochmal Neu laden oder kurz Deployment "Restart rollout" drücken.`;
+      setDot(dotExplain, "warn");
     }
   }
+}
 
-  if (pods.size >= 2) {
-    setDot(dot, "ok");
-    setText(txt, `Nice! Ich habe ${pods.size} verschiedene Pods gesehen. (Load Balancing klappt)`);
-  } else if (pods.size === 1) {
-    setDot(dot, "warn");
-    setText(txt, "Ich sehe nur 1 Pod. Check in OpenShift: Replicas wirklich auf 2+ gesetzt?");
-  } else {
-    setDot(dot, "err");
-    setText(txt, "Ich konnte keinen Pod-Namen einsammeln. Check /api/info und Pod-Logs.");
+async function init() {
+  try {
+    await refreshOnce();
+  } catch {
+    setStatusWarn("Fehler: Live-Daten konnten nicht geladen werden.");
   }
 
-  if (btn) btn.disabled = false;
+  if (btnRefresh) {
+    btnRefresh.addEventListener("click", async () => {
+      try {
+        await refreshOnce();
+      } catch {
+        setStatusWarn("Fehler: Live-Daten konnten nicht geladen werden.");
+      }
+    });
+  }
+
+  // Startet automatisch, damit du dem Prof ohne Extra-Klick zeigen kannst, dass 2 Pods existieren
+  runPodSampler();
 }
 
-function wireButtons() {
-  const btnRefresh = $("btnRefresh");
-  if (btnRefresh) btnRefresh.addEventListener("click", loadOnce);
-
-  const btnSample = $("btnSamplePods");
-  if (btnSample) btnSample.addEventListener("click", () => samplePods(20));
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
-  wireButtons();
-  await loadOnce();
-
-  // optional: alle 10 Sekunden aktualisieren (damit es „live“ wirkt)
-  setInterval(() => {
-    loadOnce().catch(() => {});
-  }, 10000);
-});
+init();
 
   

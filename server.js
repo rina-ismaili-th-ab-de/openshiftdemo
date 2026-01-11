@@ -1,39 +1,46 @@
 const express = require("express");
 const path = require("path");
+const os = require("os");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const startedAt = Date.now();
-let requestCount = 0;
+const startedAt = new Date();
+let infoHits = 0;
 
-app.use(express.static(path.join(__dirname, "public")));
+function isoNow() {
+  return new Date().toISOString();
+}
 
 app.get("/api/info", (req, res) => {
-  requestCount++;
+  infoHits += 1;
 
-  const podName = process.env.POD_NAME || process.env.HOSTNAME || "unknown";
-  const namespace = process.env.POD_NAMESPACE || "unknown";
-  const nodeName = process.env.NODE_NAME || "unknown";
-  const version = process.env.APP_VERSION || "v1";
+  // Wichtig: damit der Browser nicht "klebt" und eher beide Pods trifft
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Surrogate-Control", "no-store");
+  res.setHeader("Connection", "close");
 
   res.json({
-    version: version,
-
-    // damit deine aktuelle Webseite es sicher findet:
-    podName: podName,
-    namespace: namespace,
-    nodeName: nodeName,
-
-    // alte/zusätzliche Felder (nicht schlimm, eher gut)
-    instance: podName,
-    serverTime: new Date().toISOString(),
-    uptimeSec: Math.round((Date.now() - startedAt) / 1000),
-    requestCount: requestCount
+    version: process.env.APP_VERSION || "v1",
+    podName: process.env.POD_NAME || os.hostname(),
+    namespace: process.env.POD_NAMESPACE || "unknown",
+    nodeName: process.env.NODE_NAME || "unknown",
+    serverTime: isoNow(),
+    startedAt: startedAt.toISOString(),
+    uptimeSeconds: Math.floor(process.uptime()),
+    requestCount: infoHits,
   });
 });
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server läuft auf Port ${PORT}`);
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 

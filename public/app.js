@@ -1,5 +1,6 @@
 // public/app.js
 // Ziel: Sehr einfache, studentische Texte + Live-Daten + Load-Balancing Test (30 Requests)
+// Extra: Pods gesehen + Antwortzeit + Live-Verlauf + Auto-Refresh (alles optional, nur wenn Elemente im HTML existieren)
 
 const $ = (id) => document.getElementById(id);
 
@@ -22,6 +23,18 @@ const btnRefresh = $("btnRefresh");
 const btnBurst = $("btnBurst");
 const vBurst = $("vBurst");
 const burstHint = $("burstHint");
+
+// NEU (nur aktiv, wenn im HTML vorhanden)
+const vPodsSeen = $("vPodsSeen");
+const vLatency = $("vLatency");
+const historyList = $("historyList");
+const btnAuto = $("btnAuto");
+const btnClearHistory = $("btnClearHistory");
+
+// Zustand
+let seenPods = new Set();
+let history = [];
+let autoTimer = null;
 
 function setText(el, text) {
   if (!el) return;
@@ -52,8 +65,24 @@ function prettyUptime(seconds) {
   return `${h} Stunden ${restM} Minuten`;
 }
 
+function ms(n) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return "–";
+  return `${Math.round(x)} ms`;
+}
+
+function nowTime() {
+  return new Date().toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
 async function fetchInfo(cacheBuster = "") {
   const url = `/api/info?t=${Date.now()}_${Math.random().toString(16).slice(2)}${cacheBuster}`;
+
+  const t0 = performance.now();
   const res = await fetch(url, {
     cache: "no-store",
     headers: {
@@ -61,8 +90,12 @@ async function fetchInfo(cacheBuster = "") {
       Pragma: "no-cache",
     },
   });
+  const t1 = performance.now();
+
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  const info = await res.json();
+
+  return { info, latencyMs: t1 - t0 };
 }
 
 function renderBurst(counts) {
@@ -81,14 +114,29 @@ function renderBurst(counts) {
   // Beispiel:
   // pod-a  (16x)
   // pod-b  (14x)
-  vBurst.innerHTML = entries
-    .map(([pod, c]) => `${pod} (${c}x)`)
-    .join("<br>");
+  vBurst.innerHTML = entries.map(([pod, c]) => `${pod} (${c}x)`).join("<br>");
+}
+
+function renderHistory() {
+  if (!historyList) return;
+
+  if (history.length === 0) {
+    historyList.textContent =
+      "Noch kein Verlauf. Klick „Neu laden“ oder starte den 30-Requests-Test.";
+  } else {
+    const last15 = history.slice(0, 15);
+    const lines = last15.map(
+      (h) => `${h.time} | ${h.pod} | ${h.version} | ${h.uptime} | ${h.latency}`
+    );
+    historyList.textContent = lines.join("\n");
+  }
+
+  if (vPodsSeen) setText(vPodsSeen, `${seenPods.size}`);
 }
 
 async function loadOnce() {
   try {
-    const info = await fetchInfo();
+    const { info, latencyMs } = await fetchInfo();
 
     // Route-Link
     if (vRoute) setText(vRoute, window.location.origin);
@@ -101,6 +149,25 @@ async function loadOnce() {
     setText(vReq, info.requestCount != null ? String(info.requestCount) : "–");
     setText(vTime, info.serverTime || "–");
 
+    // NEU: Antwortzeit anzeigen
+    if (vLatency) setText(vLatency, ms(latencyMs));
+
+    // NEU: Pods merken + Verlauf füllen
+    const pod = info.podName || "unknown";
+    seenPods.add(pod);
+
+    history.unshift({
+      time: nowTime(),
+      pod,
+      version: info.version || "–",
+      uptime: prettyUptime(info.uptimeSeconds),
+      latency: ms(latencyMs),
+    });
+
+    // Verlauf begrenzen
+    history = history.slice(0, 50);
+    renderHistory();
+
     setDot(dotStatus, "ok");
     setText(txtStatus, "OK: Live-Daten kommen aus einem Pod");
 
@@ -108,7 +175,7 @@ async function loadOnce() {
     setDot(dotExplain, "ok");
     setText(
       txtExplain,
-      "Wenn Pod + Namespace + Uptime sichtbar sind, läuft die App wirklich als Container in OpenShift. Bei 2 Pods sollte sich der Pod-Name manchmal ändern."
+      "Wenn Pod + Namespace + Uptime sichtbar sind, läuft die App wirklich als Container in OpenShift. Bei mehreren Pods sollte sich der Pod-Name manchmal ändern."
     );
   } catch (e) {
     setDot(dotStatus, "err");
@@ -129,17 +196,30 @@ async function runBurst(times = 30) {
   setText(burstHint, `Läuft… (${times} Requests)`);
 
   const counts = {};
-  let ok = 0;
 
   for (let i = 1; i <= times; i++) {
     try {
-      const info = await fetchInfo(`_${i}`);
+      const { info, latencyMs } = await fetchInfo(`_${i}`);
       const pod = info.podName || "unknown";
+
       counts[pod] = (counts[pod] || 0) + 1;
-      ok += 1;
+
+      // NEU: Pods auch hier merken (passt dann zu “Pods gesehen”)
+      seenPods.add(pod);
+
+      // optional: Verlauf mitfüllen (macht es anschaulicher)
+      history.unshift({
+        time: nowTime(),
+        pod,
+        version: info.version || "–",
+        uptime: prettyUptime(info.uptimeSeconds),
+        latency: ms(latencyMs),
+      });
+      history = history.slice(0, 50);
 
       // Live-Update währenddessen
       renderBurst(counts);
+      renderHistory();
     } catch {
       // ignorieren, wir machen weiter
     }
@@ -149,13 +229,17 @@ async function runBurst(times = 30) {
   }
 
   renderBurst(counts);
+  renderHistory();
 
   const podsFound = Object.keys(counts).length;
 
   if (podsFound >= 2) {
     setText(burstHint, `Fertig: ${podsFound} Pods gesehen (Load-Balancing sichtbar).`);
   } else if (podsFound === 1) {
-    setText(burstHint, "Fertig: nur 1 Pod gesehen. Tipp: nochmal klicken oder kurz Seite neu laden.");
+    setText(
+      burstHint,
+      "Fertig: nur 1 Pod gesehen. Tipp: nochmal klicken oder kurz Seite neu laden."
+    );
   } else {
     setText(burstHint, "Fertig: keine Daten bekommen. Check /api/info.");
   }
@@ -163,11 +247,39 @@ async function runBurst(times = 30) {
   btnBurst.disabled = false;
 }
 
+// NEU: Auto-Refresh (nur wenn Button existiert)
+function toggleAuto() {
+  if (!btnAuto) return;
+
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    btnAuto.textContent = "Auto-Refresh: Aus";
+    return;
+  }
+
+  autoTimer = setInterval(loadOnce, 2000);
+  btnAuto.textContent = "Auto-Refresh: An (2s)";
+}
+
+// NEU: Verlauf löschen
+function clearHistory() {
+  history = [];
+  seenPods = new Set();
+  renderHistory();
+  if (vPodsSeen) setText(vPodsSeen, "0");
+}
+
 function init() {
   // nur wenn Elemente existieren
   if (btnRefresh) btnRefresh.addEventListener("click", loadOnce);
   if (btnBurst) btnBurst.addEventListener("click", () => runBurst(30));
 
+  // NEU
+  if (btnAuto) btnAuto.addEventListener("click", toggleAuto);
+  if (btnClearHistory) btnClearHistory.addEventListener("click", clearHistory);
+
+  renderHistory();
   loadOnce();
 }
 

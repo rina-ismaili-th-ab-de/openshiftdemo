@@ -1,6 +1,4 @@
 // public/app.js
-// Ziel: Sehr einfache, studentische Texte + Live-Daten + Load-Balancing Test (30 Requests)
-// Extra: Pods gesehen + Antwortzeit + Live-Verlauf + Auto-Refresh (alles optional, nur wenn Elemente im HTML existieren)
 
 const $ = (id) => document.getElementById(id);
 
@@ -33,6 +31,7 @@ const btnClearHistory = $("btnClearHistory");
 
 // Zustand
 let seenPods = new Set();
+let podCounts = {}; // NEU: zählt, wie oft welcher Pod geantwortet hat
 let history = [];
 let autoTimer = null;
 
@@ -117,6 +116,26 @@ function renderBurst(counts) {
   vBurst.innerHTML = entries.map(([pod, c]) => `${pod} (${c}x)`).join("<br>");
 }
 
+// NEU: Pods gesehen als Liste + Zähler anzeigen
+function renderPodsSeen() {
+  if (!vPodsSeen) return;
+
+  const entries = Object.entries(podCounts);
+
+  // wenn noch nichts da ist
+  if (entries.length === 0) {
+    vPodsSeen.textContent = `${seenPods.size}`;
+    return;
+  }
+
+  // nach Häufigkeit sortieren
+  entries.sort((a, b) => b[1] - a[1]);
+
+  // Anzeige: Anzahl + Liste
+  vPodsSeen.innerHTML =
+    `${seenPods.size} Pods<br>` + entries.map(([pod, c]) => `${pod} (${c}x)`).join("<br>");
+}
+
 function renderHistory() {
   if (!historyList) return;
 
@@ -131,7 +150,8 @@ function renderHistory() {
     historyList.textContent = lines.join("\n");
   }
 
-  if (vPodsSeen) setText(vPodsSeen, `${seenPods.size}`);
+  // vorher stand hier nur die Zahl -> jetzt Liste + Zähler
+  renderPodsSeen();
 }
 
 async function loadOnce() {
@@ -152,9 +172,11 @@ async function loadOnce() {
     // NEU: Antwortzeit anzeigen
     if (vLatency) setText(vLatency, ms(latencyMs));
 
-    // NEU: Pods merken + Verlauf füllen
+    // NEU: Pods merken + zählen
     const pod = info.podName || "unknown";
     seenPods.add(pod);
+    podCounts[pod] = (podCounts[pod] || 0) + 1;
+    renderPodsSeen();
 
     history.unshift({
       time: nowTime(),
@@ -204,8 +226,10 @@ async function runBurst(times = 30) {
 
       counts[pod] = (counts[pod] || 0) + 1;
 
-      // NEU: Pods auch hier merken (passt dann zu “Pods gesehen”)
+      // NEU: Pods auch hier merken + zählen
       seenPods.add(pod);
+      podCounts[pod] = (podCounts[pod] || 0) + 1;
+      renderPodsSeen();
 
       // optional: Verlauf mitfüllen (macht es anschaulicher)
       history.unshift({
@@ -266,7 +290,9 @@ function toggleAuto() {
 function clearHistory() {
   history = [];
   seenPods = new Set();
+  podCounts = {}; // NEU
   renderHistory();
+  renderPodsSeen(); // NEU
   if (vPodsSeen) setText(vPodsSeen, "0");
 }
 

@@ -29,6 +29,20 @@ const historyList = $("historyList");
 const btnAuto = $("btnAuto");
 const btnClearHistory = $("btnClearHistory");
 
+// ======= NEU: Readiness-Box (oben) =======
+const dotReady = $("dotReady");
+const txtReady = $("txtReady");
+const vReadyAt = $("vReadyAt");
+const vReadyLeft = $("vReadyLeft");
+
+// ======= NEU: Stabilitäts-Buttons (unten) =======
+const btnHealth = $("btnHealth");
+const btnReadyCheck = $("btnReadyCheck");
+const btnCrash = $("btnCrash");
+const vHealth = $("vHealth");
+const vReadyCheck = $("vReadyCheck");
+const vCrash = $("vCrash");
+
 // Zustand
 let seenPods = new Set();
 let podCounts = {}; // NEU: zählt, wie oft welcher Pod geantwortet hat
@@ -95,6 +109,52 @@ async function fetchInfo(cacheBuster = "") {
   const info = await res.json();
 
   return { info, latencyMs: t1 - t0 };
+}
+
+// ======= NEU: Helper für /api/health und /api/ready =======
+async function fetchJson(url, options) {
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      ...(options && options.headers ? options.headers : {}),
+    },
+    ...options,
+  });
+
+  // auch bei 503 wollen wir JSON lesen (ready kann 503 sein)
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
+
+  return { ok: res.ok, status: res.status, data };
+}
+
+// ======= NEU: Readiness oben live anzeigen =======
+async function updateReadinessBox() {
+  // nur wenn die Elemente im HTML existieren
+  if (!dotReady && !txtReady && !vReadyAt && !vReadyLeft) return;
+
+  const { ok, status, data } = await fetchJson("/api/ready?t=" + Date.now());
+
+  if (ok) {
+    setDot(dotReady, "ok");
+    setText(txtReady, "READY: Dieser Pod ist bereit für Traffic");
+    setText(vReadyAt, (data && data.readyAt) ? data.readyAt : "–");
+    setText(vReadyLeft, "0 s");
+    return;
+  }
+
+  // not ready (z.B. 503)
+  setDot(dotReady, "warn");
+  const left = (data && typeof data.secondsLeft === "number") ? `${data.secondsLeft} s` : "–";
+  setText(txtReady, `NOCH NICHT READY (HTTP ${status})`);
+  setText(vReadyAt, (data && data.readyAt) ? data.readyAt : "–");
+  setText(vReadyLeft, left);
 }
 
 function renderBurst(counts) {
@@ -199,6 +259,9 @@ async function loadOnce() {
       txtExplain,
       "Wenn Pod + Namespace + Uptime sichtbar sind, läuft die App wirklich als Container in OpenShift. Bei mehreren Pods sollte sich der Pod-Name manchmal ändern."
     );
+
+    // ======= NEU: Readiness-Box updaten =======
+    await updateReadinessBox();
   } catch (e) {
     setDot(dotStatus, "err");
     setText(txtStatus, "Fehler: Ich konnte /api/info gerade nicht laden.");
@@ -208,6 +271,11 @@ async function loadOnce() {
       txtExplain,
       "Tipp: In OpenShift bei Pods/Logs schauen, ob die App läuft. Danach Seite neu laden."
     );
+
+    // auch hier versuchen wir Readiness zu updaten (falls nur info down ist)
+    try {
+      await updateReadinessBox();
+    } catch {}
   }
 }
 
@@ -296,6 +364,67 @@ function clearHistory() {
   if (vPodsSeen) setText(vPodsSeen, "0");
 }
 
+// ======= NEU: Button-Aktionen (Health / Ready / Crash) =======
+async function doHealth() {
+  if (!vHealth) return;
+
+  setText(vHealth, "Lade…");
+  const { ok, status, data } = await fetchJson("/api/health?t=" + Date.now());
+  if (ok) {
+    setText(vHealth, `OK (${status}) | ${data && data.serverTime ? data.serverTime : ""}`.trim());
+  } else {
+    setText(vHealth, `Fehler (HTTP ${status})`);
+  }
+}
+
+async function doReadyCheck() {
+  if (!vReadyCheck) return;
+
+  setText(vReadyCheck, "Lade…");
+  const { ok, status, data } = await fetchJson("/api/ready?t=" + Date.now());
+
+  if (ok) {
+    setText(vReadyCheck, `READY (${status}) | readyAt: ${data && data.readyAt ? data.readyAt : "–"}`);
+  } else {
+    const left = (data && typeof data.secondsLeft === "number") ? `${data.secondsLeft}s` : "–";
+    setText(vReadyCheck, `NOT READY (${status}) | noch: ${left}`);
+  }
+
+  // oben auch mit updaten, damit alles zusammenpasst
+  try {
+    await updateReadinessBox();
+  } catch {}
+}
+
+async function doCrash() {
+  if (!vCrash) return;
+
+  setText(vCrash, "Crash wird ausgelöst…");
+  const { ok, status, data } = await fetchJson("/api/crash?t=" + Date.now(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reason: "demo" }),
+  });
+
+  if (ok) {
+    setText(
+      vCrash,
+      `OK (${status}) | ${data && data.message ? data.message : "Crash"}`
+    );
+  } else {
+    setText(
+      vCrash,
+      `Fehler (HTTP ${status}) | ${data && data.message ? data.message : "Crash nicht erlaubt"}`
+    );
+  }
+
+  // Kurz warten und dann neu laden -> dann sieht man oft neuen Pod + kleine Uptime
+  setTimeout(() => {
+    loadOnce();
+    try { updateReadinessBox(); } catch {}
+  }, 2500);
+}
+
 function init() {
   // nur wenn Elemente existieren
   if (btnRefresh) btnRefresh.addEventListener("click", loadOnce);
@@ -304,6 +433,11 @@ function init() {
   // NEU
   if (btnAuto) btnAuto.addEventListener("click", toggleAuto);
   if (btnClearHistory) btnClearHistory.addEventListener("click", clearHistory);
+
+  // ======= NEU: Buttons =======
+  if (btnHealth) btnHealth.addEventListener("click", doHealth);
+  if (btnReadyCheck) btnReadyCheck.addEventListener("click", doReadyCheck);
+  if (btnCrash) btnCrash.addEventListener("click", doCrash);
 
   renderHistory();
   loadOnce();

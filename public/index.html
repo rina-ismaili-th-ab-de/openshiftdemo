@@ -81,6 +81,35 @@
 
           <div class="k">Server-Zeit</div>
           <div class="v" id="vTime">–</div>
+
+          <!-- NEU: Readiness-Status (bereit für Traffic?) -->
+          <div class="hr"></div>
+
+          <h3 style="margin: 0 0 8px;">Readiness-Test (bereit für Traffic?)</h3>
+          <p class="small" style="margin-top:0;">
+            OpenShift leitet Traffic nur an Pods weiter, die “ready” sind.
+            Wenn wir einen kurzen Delay einstellen, siehst du hier kurz “noch nicht bereit”.
+          </p>
+
+          <div class="badge" style="margin: 10px 0;">
+            <span class="dot warn" id="dotReady"></span>
+            <span id="txtReady">Readiness wird geladen…</span>
+          </div>
+
+          <div class="kv" style="margin-top:10px;">
+            <div class="k">Ready seit</div>
+            <div class="v" id="vReadyAt">–</div>
+
+            <div class="k">Noch warten (bei Delay)</div>
+            <div class="v" id="vReadyLeft">–</div>
+          </div>
+
+          <!-- NEU: schöneres Dashboard -->
+          <div class="k">Pods gesehen (seit Öffnen)</div>
+          <div class="v" id="vPodsSeen">–</div>
+
+          <div class="k">Antwortzeit (ms)</div>
+          <div class="v" id="vLatency">–</div>
         </div>
 
         <div class="hr"></div>
@@ -102,6 +131,50 @@
           <div class="k">Antworten pro Pod (Beweis für Verteilung)</div>
           <div class="v" id="vBurst">–</div>
         </div>
+
+        <!-- NEU: Live-Verlauf + Auto-Refresh -->
+        <div class="hr"></div>
+
+        <h3 style="margin:0 0 8px;">Live-Verlauf (letzte 15 Antworten)</h3>
+        <p class="small" style="margin-top:0;">
+          Hier sieht man kurz und klar, wie die Anfragen verteilt werden und wie schnell die App antwortet.
+        </p>
+
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0;">
+          <button id="btnAuto" type="button">Auto-Refresh: Aus</button>
+          <button id="btnClearHistory" type="button">Verlauf löschen</button>
+        </div>
+
+        <div id="historyList" class="small" style="line-height:1.5; white-space:pre-wrap;">–</div>
+
+        <!-- NEU: Stabilitäts-Tests (Health + Ready + Self-Healing) -->
+        <div class="hr"></div>
+
+        <h3 style="margin:0 0 8px;">Stabilitäts-Tests (kurz und klar)</h3>
+        <p class="small" style="margin-top:0;">
+          Damit zeigen wir: Der Server läuft, die App ist bereit für Traffic und OpenShift kann nach einem Crash automatisch neu starten (Self-Healing).
+        </p>
+
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0;">
+          <button id="btnHealth" type="button">Health prüfen</button>
+          <button id="btnReadyCheck" type="button">Ready prüfen</button>
+          <button id="btnCrash" type="button">Self-Healing testen (Crash)</button>
+        </div>
+
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">Health-Ergebnis</div>
+          <div class="v" id="vHealth">–</div>
+
+          <div class="k">Ready-Ergebnis</div>
+          <div class="v" id="vReadyCheck">–</div>
+
+          <div class="k">Crash-Ergebnis</div>
+          <div class="v" id="vCrash">–</div>
+        </div>
+
+        <p class="small" style="margin-top:10px;">
+          Hinweis: Beim Crash startet OpenShift den Pod neu. Danach sieht man oft neuen Pod-Namen und die Uptime ist wieder klein.
+        </p>
 
         <div class="hr"></div>
 
@@ -136,6 +209,9 @@
   <script src="/app.js"></script>
 </body>
 </html>
+
+
+
 
 
 

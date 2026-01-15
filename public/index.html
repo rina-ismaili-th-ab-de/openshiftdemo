@@ -9,20 +9,23 @@
 <body>
   <div class="container">
     <div class="header">
-      
+
       <div class="headerLeft">
-  <div class="chips">
-    <span class="chip">Red Hat OpenShift · Container Platform (PaaS)</span>
-    <span class="chip chipSoft">Team: Rina Ismaili & Alma Dacik</span>
-  </div>
+        <div class="brandBlock">
+          <div class="brandTop">
+            <span class="brandDot"></span>
+            <div class="brandText">
+              <h1 class="brandTitle">Red Hat OpenShift Container Platform</h1>
+              <p class="brandSubtitle">Platform as a Service (PaaS)</p>
+            </div>
+          </div>
 
-  <h1 class="title">OpenShift PaaS Demo</h1>
-
-  <p class="tagline">
-    Live-Demo mit echten Cluster-Daten: Pods, Route, Load-Balancing, Health & Readiness.
-  </p>
-</div>
-
+          <div class="brandMeta">
+            <span class="metaPill">Team: Rina Ismaili & Alma Dacik</span>
+            <span class="metaLine">Live-Demo mit echten Cluster-Daten.</span>
+          </div>
+        </div>
+      </div>
 
       <div class="nav">
         <a href="/">Start</a>
@@ -64,7 +67,6 @@
           <span id="txtStatus">Lade Live-Daten…</span>
         </div>
 
-        <!-- KV: NUR Key/Value -->
         <div class="kv">
           <div class="k">Dein Link (Route)</div>
           <div class="v" id="vRoute">–</div>
@@ -93,7 +95,6 @@
 
         <div class="hr"></div>
 
-        <!-- Readiness-Block (NICHT in kv) -->
         <h3 style="margin: 0 0 8px;">Readiness-Test (bereit für Traffic?)</h3>
         <p class="small" style="margin-top:0;">
           OpenShift leitet Traffic nur an Pods weiter, die “ready” sind.
@@ -194,9 +195,8 @@
       </div>
     </div>
 
-  
+  </div>
+
   <script src="/app.js"></script>
 </body>
 </html>
-
-

@@ -11,9 +11,9 @@
   --line: rgba(15,23,42,0.10);
 
   /* Neon accents */
-  --accent:#7c3aed;     /* neon purple */
-  --accent2:#06b6d4;    /* neon cyan */
-  --accent3:#f43f5e;    /* neon pink */
+  --accent:#7c3aed;     /* purple */
+  --accent2:#06b6d4;    /* cyan */
+  --accent3:#f43f5e;    /* pink */
 
   --ok:#22c55e;
   --warn:#f59e0b;
@@ -38,7 +38,7 @@ body{
   overflow-x:hidden;
 }
 
-/* ===== Futuristic soft glow (heller) ===== */
+/* ===== Futuristic soft glow ===== */
 body::before{
   content:"";
   position:fixed;
@@ -63,16 +63,16 @@ body::after{
   mask-image: radial-gradient(circle at 28% 10%, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0) 78%);
   pointer-events:none;
   z-index:-1;
-  opacity:.35;
+  opacity:.32;
 }
 
 .container{
-  max-width:1100px;
+  max-width:1160px;
   margin:0 auto;
   padding:26px 18px 46px;
 }
 
-/* ===== Header (Cyber / Neon, aber nicht dunkel) ===== */
+/* ===== Header ===== */
 .header{
   position:relative;
   border-radius: var(--radius2);
@@ -127,7 +127,7 @@ body::after{
   z-index:2;
 }
 
-/* ===== Header Brand Block ===== */
+/* Brand Block */
 .brandBlock{
   display:flex;
   flex-direction:column;
@@ -196,7 +196,7 @@ body::after{
   opacity:.95;
 }
 
-/* ===== Nav Buttons im Header ===== */
+/* Nav Buttons */
 .nav{
   display:flex;
   gap:10px;
@@ -246,7 +246,12 @@ body::after{
   .grid{ grid-template-columns: 1fr; }
 }
 
-/* ===== Cards (hell + glass + modern) ===== */
+/* Full width sections */
+.span2{
+  grid-column: 1 / -1;
+}
+
+/* ===== Cards ===== */
 .card{
   background: var(--card);
   border: 1px solid var(--line);
@@ -259,14 +264,17 @@ body::after{
   overflow:hidden;
 }
 
+/* Very subtle accent sheen */
 .card::before{
   content:"";
   position:absolute;
   inset:-1px;
   border-radius: var(--radius2);
-  background: radial-gradient(600px 260px at 15% 15%, rgba(124,58,237,.10), transparent 60%);
+  background:
+    radial-gradient(620px 320px at 14% 12%, rgba(124,58,237,.10), transparent 60%),
+    radial-gradient(520px 280px at 92% 18%, rgba(6,182,212,.08), transparent 55%);
   pointer-events:none;
-  opacity:.7;
+  opacity:.65;
 }
 
 .card:hover{
@@ -275,13 +283,26 @@ body::after{
   border:1px solid rgba(15,23,42,0.14);
 }
 
+/* Headings: clean + mini line */
 .card h2{
-  margin:0 0 10px;
+  margin:0 0 12px;
   font-size:18px;
   font-weight:900;
-  letter-spacing:-0.2px;
+  letter-spacing:-0.22px;
   position:relative;
   z-index:1;
+  padding-bottom:8px;
+}
+
+.card h2::after{
+  content:"";
+  display:block;
+  height:2px;
+  width:64px;
+  margin-top:8px;
+  border-radius:999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  opacity:.85;
 }
 
 .card h3{
@@ -317,7 +338,7 @@ body::after{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:6px 10px;
+  padding:7px 12px;
   border-radius:999px;
   font-weight:900;
   font-size:13px;
@@ -351,6 +372,23 @@ body::after{
   .kv{ grid-template-columns: 1fr; }
 }
 
+/* Wenn die Card über die ganze Breite geht: KV wird “Dashboard”-mäßig */
+.span2 .kv{
+  grid-template-columns: 180px 1fr 180px 1fr;
+}
+
+@media (max-width: 900px){
+  .span2 .kv{
+    grid-template-columns: 220px 1fr;
+  }
+}
+
+@media (max-width: 520px){
+  .span2 .kv{
+    grid-template-columns: 1fr;
+  }
+}
+
 .k{
   color: rgba(66,82,107,.92);
   font-weight:900;
@@ -368,16 +406,6 @@ body::after{
   box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
 }
 
-/* ===== Listen ===== */
-.list{
-  margin:10px 0 0;
-  padding-left:18px;
-  color: rgba(66,82,107,.95);
-  position:relative;
-  z-index:1;
-}
-.list li{ margin:6px 0; }
-
 /* ===== Buttons überall ===== */
 button{
   border:1px solid rgba(15,23,42,0.12);
@@ -388,7 +416,7 @@ button{
   font-weight:900;
   cursor:pointer;
   box-shadow: 0 12px 26px rgba(2,6,23,.12);
-  transition: transform .10s ease, box-shadow .2s ease, border .2s ease;
+  transition: transform .10s ease, box-shadow .2s ease, border .2s ease, background .2s ease;
 }
 
 button:hover{
@@ -401,7 +429,16 @@ button:active{
   transform: scale(0.99);
 }
 
-/* ===== Inputs ===== */
+/* Buttons in Action-Reihen (sehen wie primary aus) */
+.card button{
+  background: linear-gradient(135deg, rgba(124,58,237,.16), rgba(6,182,212,.14));
+}
+
+.card button:hover{
+  background: linear-gradient(135deg, rgba(124,58,237,.22), rgba(6,182,212,.20));
+}
+
+/* ===== Inputs (falls du sie wo nutzt) ===== */
 .activity{
   display:flex;
   gap:10px;
@@ -428,7 +465,7 @@ button:active{
   box-shadow: 0 0 0 5px rgba(6,182,212,.16), 0 12px 24px rgba(2,6,23,.14);
 }
 
-/* ===== History Console bleibt dark (sieht wie Terminal aus) ===== */
+/* ===== History Console bleibt dark ===== */
 #historyList{
   background:#070a14;
   color:#eaf2ff;
@@ -452,6 +489,7 @@ button:active{
   .header .brandTitle{ font-size:18px; }
   .nav a, .nav button{ padding:9px 12px; }
 }
+
 
 
 

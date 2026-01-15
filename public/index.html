@@ -57,6 +57,7 @@
           <span id="txtStatus">Lade Live-Daten…</span>
         </div>
 
+        <!-- KV: NUR Key/Value -->
         <div class="kv">
           <div class="k">Dein Link (Route)</div>
           <div class="v" id="vRoute">–</div>
@@ -81,30 +82,29 @@
 
           <div class="k">Server-Zeit</div>
           <div class="v" id="vTime">–</div>
+        </div>
 
-          <!-- NEU: Readiness-Status (bereit für Traffic?) -->
-          <div class="hr"></div>
+        <div class="hr"></div>
 
-          <h3 style="margin: 0 0 8px;">Readiness-Test (bereit für Traffic?)</h3>
-          <p class="small" style="margin-top:0;">
-            OpenShift leitet Traffic nur an Pods weiter, die “ready” sind.
-            Wenn wir einen kurzen Delay einstellen, siehst du hier kurz “noch nicht bereit”.
-          </p>
+        <!-- Readiness-Block (NICHT in kv) -->
+        <h3 style="margin: 0 0 8px;">Readiness-Test (bereit für Traffic?)</h3>
+        <p class="small" style="margin-top:0;">
+          OpenShift leitet Traffic nur an Pods weiter, die “ready” sind.
+          Wenn wir einen kurzen Delay einstellen, siehst du hier kurz “noch nicht bereit”.
+        </p>
 
-          <div class="badge" style="margin: 10px 0;">
-            <span class="dot warn" id="dotReady"></span>
-            <span id="txtReady">Readiness wird geladen…</span>
-          </div>
+        <div class="badge" style="margin: 10px 0;">
+          <span class="dot warn" id="dotReady"></span>
+          <span id="txtReady">Readiness wird geladen…</span>
+        </div>
 
-          <div class="kv" style="margin-top:10px;">
-            <div class="k">Ready seit</div>
-            <div class="v" id="vReadyAt">–</div>
+        <div class="kv" style="margin-top:10px;">
+          <div class="k">Ready seit</div>
+          <div class="v" id="vReadyAt">–</div>
 
-            <div class="k">Noch warten (bei Delay)</div>
-            <div class="v" id="vReadyLeft">–</div>
-          </div>
+          <div class="k">Noch warten (bei Delay)</div>
+          <div class="v" id="vReadyLeft">–</div>
 
-          <!-- NEU: schöneres Dashboard -->
           <div class="k">Pods gesehen (seit Öffnen)</div>
           <div class="v" id="vPodsSeen">–</div>
 
@@ -132,7 +132,6 @@
           <div class="v" id="vBurst">–</div>
         </div>
 
-        <!-- NEU: Live-Verlauf + Auto-Refresh -->
         <div class="hr"></div>
 
         <h3 style="margin:0 0 8px;">Live-Verlauf (letzte 15 Antworten)</h3>
@@ -147,7 +146,6 @@
 
         <div id="historyList" class="small" style="line-height:1.5; white-space:pre-wrap;">–</div>
 
-        <!-- NEU: Stabilitäts-Tests (Health + Ready + Self-Healing) -->
         <div class="hr"></div>
 
         <h3 style="margin:0 0 8px;">Stabilitäts-Tests (kurz und klar)</h3>
@@ -189,30 +187,9 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:16px;">
-      <h2>So zeigst du es dem Prof (sehr klar)</h2>
-
-      <ul class="list">
-        <li>1) Seite öffnen: Du siehst Pod + Namespace + Uptime.</li>
-        <li>2) In OpenShift Replicas von 1 auf 2 stellen.</li>
-        <li>3) Hier 30 Requests starten: Wenn 2 Pods erscheinen, ist Load-Balancing sichtbar.</li>
-        <li>4) APP_VERSION von v1 auf v2 ändern (oder Git push) → neue Version wird ausgerollt.</li>
-        <li>5) Optional: Einen Pod löschen → OpenShift startet automatisch einen neuen (Self-Healing).</li>
-      </ul>
-
-      <div class="footerNote">
-        Tipp: Mach 2 Screenshots: (a) Live-Beweis + Load-Balancing-Box, (b) OpenShift Deployment mit 2 Replicas.
-      </div>
-    </div>
-  </div>
-
+  
   <script src="/app.js"></script>
 </body>
 </html>
-
-
-
-
-
 
 

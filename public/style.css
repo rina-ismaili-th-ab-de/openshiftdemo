@@ -32,15 +32,16 @@ body{
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   color:#fff;
   border-radius:18px;
-  padding:22px 22px;
+  padding:24px 24px;
   box-shadow: var(--shadow);
   display:flex;
-  align-items:flex-start;
+  align-items:center;              /* geändert */
   justify-content:space-between;
   gap:16px;
   flex-wrap:wrap;
 }
 
+/* Falls du noch ein altes <h1> ohne class hast, bleibt es ok */
 .header h1{
   margin:0;
   font-size:30px;
@@ -120,7 +121,7 @@ body{
   font-weight:700;
   font-size:13px;
   border:1px solid var(--line);
-  background:#f8fafc;
+  background:#ffffff;
 }
 .dot{
   width:10px; height:10px; border-radius:50%;
@@ -147,7 +148,7 @@ body{
   font-weight:700;
 }
 .v{
-  background:#f8fafc;
+  background:#fbfbfa;
   border:1px solid var(--line);
   border-radius:12px;
   padding:10px 12px;
@@ -193,6 +194,7 @@ body{
   color:var(--muted);
   font-size:13px;
 }
+
 /* Schönere Buttons (alle <button>) */
 button{
   border:1px solid var(--line);
@@ -217,16 +219,6 @@ button:active{
   font-size:15px;
 }
 
-/* Die KV-Boxen wirken kompakter */
-.kv .v{
-  background:#fbfbfa;
-}
-
-/* Badge etwas edler */
-.badge{
-  background:#ffffff;
-}
-
 /* History-Liste wie “Console” */
 #historyList{
   background:#0b1220;
@@ -235,4 +227,54 @@ button:active{
   padding:12px 12px;
   border:1px solid rgba(255,255,255,.08);
 }
+
+/* ====== NEU: stylischer Header links (passt zu dem neuen HTML) ====== */
+.headerLeft{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:320px;
+}
+
+.chips{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(8px);
+}
+
+.chipSoft{
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.88);
+}
+
+.title{
+  margin:0;
+  font-size:34px;
+  letter-spacing:.2px;
+  line-height:1.1;
+  background:none;
+}
+
+.tagline{
+  margin:0;
+  max-width:780px;
+  color: rgba(255,255,255,.88);
+  line-height:1.45;
+  background:none;
+}
+
 

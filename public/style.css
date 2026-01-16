@@ -12,8 +12,8 @@
   --card2: rgba(255,255,255,1);
 
   /* OpenShift-like accent (clean + modern) */
-  --accent:#e00;      /* OpenShift red */
-  --accent2:#ff4d4d;  /* soft red */
+  --accent:#e00;
+  --accent2:#ff4d4d;
 
   /* Status */
   --ok:#22c55e;
@@ -40,7 +40,7 @@ body{
   overflow-x:hidden;
 }
 
-/* Calm background glow (neutral + small red accent) */
+/* Calm background glow */
 body::before{
   content:"";
   position:fixed;
@@ -53,7 +53,7 @@ body::before{
   z-index:-2;
 }
 
-/* Soft grid (barely visible) */
+/* Soft grid */
 body::after{
   content:"";
   position:fixed;
@@ -77,17 +77,18 @@ body::after{
 .header{
   position:relative;
   border-radius: var(--radius2);
-  padding:22px 22px;
+  padding:22px 24px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:16px;
+  gap:18px;
   flex-wrap:wrap;
   overflow:hidden;
   box-shadow: var(--shadow2);
   background:
-    radial-gradient(900px 420px at 12% 10%, rgba(255,255,255,.12), transparent 58%),
+    radial-gradient(900px 420px at 12% 10%, rgba(255,255,255,.10), transparent 58%),
     linear-gradient(135deg, #0b1220, #101a2f);
+  color:#fff;
 }
 
 /* Elegant border line */
@@ -97,24 +98,25 @@ body::after{
   inset:0;
   border-radius: var(--radius2);
   padding:1px;
-  background: linear-gradient(120deg, rgba(255,255,255,.26), rgba(255,255,255,0), rgba(255,255,255,.18));
+  background: linear-gradient(120deg, rgba(255,255,255,.22), rgba(255,255,255,0), rgba(255,255,255,.16));
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events:none;
-  opacity:.9;
+  opacity:.95;
 }
 
 /* Soft red light */
 .header::after{
   content:"";
   position:absolute;
-  inset:-90px;
+  inset:-110px;
   background:
-    radial-gradient(520px 360px at 85% 25%, rgba(224,0,0,.22), transparent 60%);
-  filter: blur(12px);
+    radial-gradient(520px 360px at 85% 25%, rgba(224,0,0,.26), transparent 60%),
+    radial-gradient(520px 360px at 12% 30%, rgba(255,255,255,.10), transparent 60%);
+  filter: blur(14px);
   pointer-events:none;
 }
 
@@ -145,7 +147,7 @@ body::after{
 .brandText{
   display:flex;
   flex-direction:column;
-  gap:3px;
+  gap:4px;
 }
 
 .header .brandTitle{
@@ -153,16 +155,16 @@ body::after{
   font-size:24px;
   font-weight:800;
   line-height:1.12;
-  letter-spacing:-0.45px;
-  text-shadow: 0 12px 30px rgba(0,0,0,.18);
+  letter-spacing:-0.35px;
+  color:#fff;
+  text-shadow: 0 14px 34px rgba(0,0,0,.28);
 }
 
 .header .brandSubtitle{
   margin:0;
   font-size:13px;
   font-weight:700;
-  color: rgba(255,255,255,.90);
-  opacity:.95;
+  color: rgba(255,255,255,.86);
 }
 
 .brandMeta{
@@ -188,8 +190,7 @@ body::after{
 .metaLine{
   font-size:13px;
   font-weight:700;
-  color: rgba(255,255,255,.90);
-  opacity:.95;
+  color: rgba(255,255,255,.84);
 }
 
 /* ===== Nav ===== */
@@ -225,6 +226,16 @@ body::after{
 
 .nav a:active, .nav button:active{
   transform: scale(0.98);
+}
+
+/* Make refresh the clear primary button in header */
+.nav #btnRefresh{
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 18px 45px rgba(224,0,0,.22);
+}
+.nav #btnRefresh:hover{
+  box-shadow: 0 22px 55px rgba(224,0,0,.28);
 }
 
 /* ===== Layout Grid ===== */
@@ -281,6 +292,7 @@ body::after{
   position:relative;
   z-index:1;
   padding-bottom:8px;
+  color: var(--text);
 }
 
 .card h2::after{
@@ -346,7 +358,6 @@ body::after{
   .kv{ grid-template-columns: 1fr; }
 }
 
-/* on full-width cards -> dashboard layout */
 .span2 .kv{
   grid-template-columns: 180px 1fr 180px 1fr;
 }
@@ -370,7 +381,6 @@ body::after{
   padding-top:2px;
 }
 
-/* Values */
 .v{
   background: rgba(248,250,252,.98);
   border:1px solid rgba(15,23,42,0.10);
@@ -385,7 +395,6 @@ body::after{
     inset 0 1px 0 rgba(255,255,255,.85);
 }
 
-/* Route: more readable wrap */
 #vRoute{
   white-space: normal;
   overflow-wrap: anywhere;
@@ -422,16 +431,13 @@ button:active{
   transform: scale(0.99);
 }
 
-/* Primary buttons */
-#btnRefresh,
+/* Primary buttons (inside cards) */
 #btnBurst{
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   color:#fff;
   border:1px solid rgba(255,255,255,.14);
   box-shadow: 0 18px 45px rgba(224,0,0,.20);
 }
-
-#btnRefresh:hover,
 #btnBurst:hover{
   box-shadow: 0 22px 55px rgba(224,0,0,.26);
 }
@@ -474,6 +480,18 @@ button:active{
   min-height:170px;
   max-height:320px;
   overflow:auto;
+
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+/* Helper row (used in HTML) */
+.row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin: 10px 0;
 }
 
 /* ===== Mobile ===== */
@@ -481,21 +499,12 @@ button:active{
   .container{ padding:20px 14px 44px; }
   .header{ padding:18px 18px; border-radius:18px; }
   .header .brandTitle{ font-size:18px; }
-  .nav a, .nav button{ padding:9px 12px
+  .nav a, .nav button{ padding:9px 12px; }
+  #btnHealth, #btnReadyCheck, #btnCrash, #btnAuto, #btnClearHistory{
+    min-width: 140px;
+  }
+}
 
-  }
-  .row{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
-    margin: 10px 0;
-  }
-  
-  #historyList{
-    white-space: pre-wrap;
-    line-height: 1.5;
-  }
   
 
 

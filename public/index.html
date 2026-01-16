@@ -9,8 +9,8 @@
 
 <body>
   <div class="container">
-    <div class="header">
 
+    <header class="header">
       <div class="headerLeft">
         <div class="brandBlock">
           <div class="brandTop">
@@ -22,28 +22,28 @@
 
           <div class="brandMeta">
             <span class="metaPill">Team: Rina Ismaili & Alma Dacik</span>
-            <span class="metaLine">Live-Demo mit echten Cluster-Daten.</span>
+            <span class="metaLine">Live Demo mit echten Cluster Daten</span>
           </div>
         </div>
       </div>
 
-      <div class="nav">
+      <nav class="nav" aria-label="Navigation">
         <a href="/">Start</a>
         <a href="/tests.html">Tests</a>
         <a href="/about.html">Kurz erklärt</a>
         <button id="btnRefresh" type="button">Neu laden</button>
-      </div>
-    </div>
+      </nav>
+    </header>
 
-    <div class="grid">
+    <main class="grid">
 
       <!-- 1) Live-Daten (breit) -->
-      <div class="card span2">
-        <h2>Live-Daten aus OpenShift</h2>
+      <section class="card span2" aria-label="Live Daten aus OpenShift">
+        <h2>Live Daten aus OpenShift</h2>
 
-        <div class="badge" style="margin-bottom:10px;">
+        <div class="badge">
           <span class="dot warn" id="dotStatus"></span>
-          <span id="txtStatus">Lade Live-Daten…</span>
+          <span id="txtStatus">Lade Live Daten…</span>
         </div>
 
         <div class="kv">
@@ -68,21 +68,21 @@
           <div class="k">Requests</div>
           <div class="v" id="vReq">–</div>
 
-          <div class="k">Server-Zeit</div>
+          <div class="k">Server Zeit</div>
           <div class="v" id="vTime">–</div>
         </div>
-      </div>
+      </section>
 
       <!-- 2) Readiness -->
-      <div class="card">
+      <section class="card" aria-label="Readiness">
         <h2>Readiness</h2>
 
-        <div class="badge" style="margin: 10px 0;">
+        <div class="badge">
           <span class="dot warn" id="dotReady"></span>
           <span id="txtReady">Readiness wird geladen…</span>
         </div>
 
-        <div class="kv" style="margin-top:10px;">
+        <div class="kv">
           <div class="k">Ready seit</div>
           <div class="v" id="vReadyAt">–</div>
 
@@ -95,46 +95,46 @@
           <div class="k">Antwortzeit (ms)</div>
           <div class="v" id="vLatency">–</div>
         </div>
-      </div>
+      </section>
 
       <!-- 3) Load-Balancing -->
-      <div class="card">
-        <h2>Load-Balancing</h2>
+      <section class="card" aria-label="Load Balancing">
+        <h2>Load Balancing</h2>
 
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0;">
+        <div class="row">
           <button id="btnBurst" type="button">30 Requests starten</button>
           <span class="small" id="burstHint">Wenn nur 1 Pod erscheint: nochmal klicken.</span>
         </div>
 
-        <div class="kv" style="margin-top:10px;">
+        <div class="kv">
           <div class="k">Antworten pro Pod</div>
           <div class="v" id="vBurst">–</div>
         </div>
-      </div>
+      </section>
 
       <!-- 4) Live-Verlauf (breit) -->
-      <div class="card span2">
-        <h2>Live-Verlauf</h2>
+      <section class="card span2" aria-label="Live Verlauf">
+        <h2>Live Verlauf</h2>
 
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0;">
-          <button id="btnAuto" type="button">Auto-Refresh: Aus</button>
+        <div class="row">
+          <button id="btnAuto" type="button">Auto Refresh: Aus</button>
           <button id="btnClearHistory" type="button">Verlauf löschen</button>
         </div>
 
-        <div id="historyList" class="small" style="line-height:1.5; white-space:pre-wrap;">–</div>
-      </div>
+        <div id="historyList">–</div>
+      </section>
 
       <!-- 5) Stabilität (breit) -->
-      <div class="card span2">
+      <section class="card span2" aria-label="Stabilität">
         <h2>Stabilität</h2>
 
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0;">
+        <div class="row">
           <button id="btnHealth" type="button">Health prüfen</button>
           <button id="btnReadyCheck" type="button">Ready prüfen</button>
-          <button id="btnCrash" type="button">Self-Healing testen</button>
+          <button id="btnCrash" type="button">Self Healing testen</button>
         </div>
 
-        <div class="kv" style="margin-top:10px;">
+        <div class="kv">
           <div class="k">Health</div>
           <div class="v" id="vHealth">–</div>
 
@@ -145,19 +145,20 @@
           <div class="v" id="vCrash">–</div>
         </div>
 
-        <!-- Diese IDs bleiben drin, damit app.js nicht kaputt geht -->
         <div class="hr"></div>
+
         <div class="badge">
           <span class="dot warn" id="dotExplain"></span>
           <span id="txtExplain">Info wird geladen…</span>
         </div>
-      </div>
+      </section>
 
-    </div>
+    </main>
   </div>
 
   <script src="/app.js"></script>
 </body>
 </html>
+
 
 

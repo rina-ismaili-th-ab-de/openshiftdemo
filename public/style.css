@@ -11,7 +11,7 @@
   --card: rgba(255,255,255,0.98);
   --card2: rgba(255,255,255,1);
 
-  /* OpenShift-like accent (clean + modern) */
+  /* OpenShift-like accent */
   --accent:#e00;
   --accent2:#ff4d4d;
 
@@ -136,14 +136,6 @@ body::after{
   gap:10px;
 }
 
-.brandTop{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.brandDot{ display:none; }
-
 .brandText{
   display:flex;
   flex-direction:column;
@@ -187,12 +179,6 @@ body::after{
   backdrop-filter: blur(8px);
 }
 
-.metaLine{
-  font-size:13px;
-  font-weight:700;
-  color: rgba(255,255,255,.84);
-}
-
 /* ===== Nav ===== */
 .nav{
   display:flex;
@@ -228,13 +214,15 @@ body::after{
   transform: scale(0.98);
 }
 
-/* Make refresh the clear primary button in header */
-.nav #btnRefresh{
+/* Primary button in header */
+.nav #btnRefresh,
+.nav #btnAll{
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: 0 18px 45px rgba(224,0,0,.22);
 }
-.nav #btnRefresh:hover{
+.nav #btnRefresh:hover,
+.nav #btnAll:hover{
   box-shadow: 0 22px 55px rgba(224,0,0,.28);
 }
 
@@ -261,7 +249,6 @@ body::after{
   border-radius: var(--radius2);
   padding:20px 20px;
   box-shadow: var(--shadow);
-  backdrop-filter: none;
   position:relative;
   overflow:hidden;
   transition: transform .14s ease, box-shadow .25s ease, border .25s ease;
@@ -304,6 +291,12 @@ body::after{
   border-radius:999px;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
   opacity:.90;
+}
+
+.card h3{
+  font-size:15px;
+  margin: 0 0 8px;
+  font-weight:800;
 }
 
 .small{
@@ -431,7 +424,7 @@ button:active{
   transform: scale(0.99);
 }
 
-/* Primary buttons (inside cards) */
+/* Primary buttons in cards */
 #btnBurst{
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   color:#fff;
@@ -442,17 +435,7 @@ button:active{
   box-shadow: 0 22px 55px rgba(224,0,0,.26);
 }
 
-/* Actions inside cards */
-#btnHealth,
-#btnReadyCheck,
-#btnCrash,
-#btnAuto,
-#btnClearHistory{
-  min-width: 160px;
-  background: rgba(255,255,255,.96);
-}
-
-/* buttons in cards: neutral */
+/* Card buttons: neutral look */
 .card button{
   background: rgba(15,23,42,.04);
 }
@@ -462,8 +445,7 @@ button:active{
 
 /* ===== History / log ===== */
 #historyList{
-  background:
-    linear-gradient(180deg, rgba(11,18,32,.оглас, rgba(11,18,32,.84));
+  background: linear-gradient(180deg, rgba(11,18,32,.92), rgba(11,18,32,.84));
   color: rgba(236,242,255,.92);
 
   border-radius:18px;
@@ -494,22 +476,76 @@ button:active{
   margin: 10px 0;
 }
 
+/* ===== Charts (für tests.html) ===== */
+.chart{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.barRow{
+  display:grid;
+  grid-template-columns: 1fr 2.2fr auto;
+  gap:10px;
+  align-items:center;
+}
+.barLabel{
+  font-size:12.8px;
+  color: var(--muted);
+  font-weight:800;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.barOuter{
+  height:12px;
+  border-radius:999px;
+  background: rgba(15,23,42,.08);
+  overflow:hidden;
+  border:1px solid rgba(15,23,42,.10);
+}
+.barInner{
+  height:100%;
+  border-radius:999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.barCount{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:12.6px;
+  color: var(--text);
+}
+.spark{
+  height:120px;
+  border-radius:18px;
+  padding:12px;
+  border:1px solid rgba(15,23,42,.10);
+  background: rgba(255,255,255,0.9);
+  display:flex;
+  gap:4px;
+  align-items:flex-end;
+  overflow:hidden;
+}
+.sparkBar{
+  width:6px;
+  border-radius:6px;
+  background: rgba(15,23,42,.30);
+}
+.sparkBar:nth-child(3n){
+  background: rgba(224,0,0,.35);
+}
+
 /* ===== Mobile ===== */
 @media (max-width: 700px){
   .container{ padding:20px 14px 44px; }
   .header{ padding:18px 18px; border-radius:18px; }
   .header .brandTitle{ font-size:18px; }
   .nav a, .nav button{ padding:9px 12px; }
-  #btnHealth, #btnReadyCheck, #btnCrash, #btnAuto, #btnClearHistory{
-    min-width: 140px;
-  }
 }
 
-/* ===== Simple page header (für tests.html / about.html ohne großen Header-Block) ===== */
+/* ===== Simple page header helpers (optional) ===== */
 .pageTopSpace{
   margin-top: 10px;
 }
-
 .pageTitle{
   margin: 6px 0 6px;
   font-size: 30px;
@@ -517,14 +553,12 @@ button:active{
   letter-spacing: -0.35px;
   color: var(--text);
 }
-
 .pageSubtitle{
   margin: 0 0 18px;
   color: var(--muted);
   font-weight: 650;
   max-width: 920px;
 }
-
 .sectionTitle{
   margin: 18px 0 8px;
   font-size: 20px;
@@ -532,7 +566,6 @@ button:active{
   letter-spacing: -0.2px;
   color: var(--text);
 }
-
 .sectionTitle::after{
   content:"";
   display:block;
@@ -543,7 +576,6 @@ button:active{
   background: linear-gradient(90deg, var(--accent), var(--accent2));
   opacity:.9;
 }
-
 .sectionText{
   margin: 0 0 16px;
   color: var(--muted);
@@ -551,7 +583,6 @@ button:active{
   line-height: 1.65;
   max-width: 980px;
 }
-
 .backLink{
   display:inline-block;
   margin-top: 8px;
@@ -562,10 +593,3 @@ button:active{
 .backLink:hover{
   text-decoration: underline;
 }
-
-
-  
-
-
-
-

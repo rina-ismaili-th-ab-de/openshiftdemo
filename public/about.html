@@ -3,59 +3,82 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OpenShift als PaaS</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <main class="card">
-    <header class="header">
-      <div class="headerTop">
-        <div>
-          <h1 class="title">OpenShift als Platform as a Service</h1>
-          <p class="subtitle">
-            Kurz erklärt, warum OpenShift in unserem Projekt als PaaS funktioniert.
-          </p>
-        </div>
+  <meta name="description" content="Kurz erklärt: Warum OpenShift in unserem Projekt als PaaS funktioniert." />
+  <title>Kurz erklärt · OpenShift als PaaS</title>
 
-        <nav class="nav">
-          <a href="/">Dashboard</a>
-          <a href="/tests.html">Tests</a>
-          <a href="/about.html">About</a>
-        </nav>
+  <!-- Absoluter Pfad + Version gegen Cache -->
+  <link rel="stylesheet" href="/style.css?v=3" />
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header + Navigation -->
+    <header class="header">
+      <div class="headerLeft">
+        <div class="brandBlock">
+          <div class="brandText">
+            <h1 class="brandTitle">Kurz erklärt</h1>
+            <p class="brandSubtitle">OpenShift als Platform as a Service (PaaS)</p>
+          </div>
+
+          <div class="brandMeta">
+            <span class="metaPill">Team: Rina Ismaili & Alma Dacik</span>
+            <span class="metaPill">Einfach erklärt, passend zur Demo</span>
+          </div>
+        </div>
       </div>
+
+      <nav class="nav" aria-label="Navigation">
+        <a href="/">Start</a>
+        <a href="/dashboard.html">Tests</a>
+        <a href="/about.html" aria-current="page">Kurz erklärt</a>
+      </nav>
     </header>
 
-    <div class="content">
-      <section class="box">
-        <h2>Was bedeutet PaaS hier?</h2>
-        <p class="small">
-          Für uns ist OpenShift die Plattform zwischen Infrastruktur und Anwendung.
-          Wir müssen keine einzelnen Server manuell verwalten, sondern definieren nur, wie unsere Anwendung laufen soll:
-          als Deployment mit Pods, mit bestimmten Einstellungen und über eine Route erreichbar.
-        </p>
-      </section>
+    <!-- Inhalt -->
+    <main class="grid">
 
-      <section class="box" style="margin-top:14px;">
+      <!-- Eine große Card für ruhiges Layout -->
+      <section class="card span2" aria-label="PaaS Erklärung">
+
+        <h2>Was bedeutet PaaS in unserem Projekt?</h2>
+        <p class="small">
+          In unserer Demo ist OpenShift die Plattform zwischen Infrastruktur und Anwendung.
+          Wir müssen keine einzelnen Server manuell verwalten, sondern beschreiben nur,
+          wie die Anwendung laufen soll. Zum Beispiel als Deployment mit Pods und über eine Route,
+          die im Browser erreichbar ist.
+        </p>
+
+        <div class="hr"></div>
+
         <h2>Was übernimmt OpenShift für uns?</h2>
         <p class="small">
-          OpenShift startet Container, ersetzt Pods bei Fehlern automatisch, verteilt Workloads im Cluster
-          und führt Updates kontrolliert aus.
-          Dadurch können wir uns auf die Anwendung und die Konfiguration konzentrieren.
+          OpenShift startet Container automatisch und sorgt dafür, dass die Anwendung stabil bleibt.
+          Wenn ein Pod ausfällt, wird er ersetzt. Wenn mehrere Pods laufen, verteilt OpenShift die Requests.
+          Updates können kontrolliert ausgerollt werden, ohne dass man alles manuell neu starten muss.
         </p>
-      </section>
 
-      <section class="box" style="margin-top:14px;">
+        <div class="hr"></div>
+
         <h2>Warum ist unsere Demo sinnvoll?</h2>
         <p class="small">
-          Unsere Website zeigt live Informationen aus dem laufenden Container (z. B. Version und Instance/Pod).
-          In OpenShift kann man damit Skalierung und Updates direkt sichtbar machen.
+          Unsere Website zeigt live Daten aus dem laufenden Container, z. B. Version, Pod-Name, Namespace und Uptime.
+          Dadurch sieht man direkt, dass die Anwendung wirklich in OpenShift läuft.
+          Wenn man die Replicas auf 2 setzt und den Test startet, erkennt man Load-Balancing,
+          weil unterschiedliche Pods antworten.
         </p>
-      </section>
 
-      <p class="hint" style="margin-top:14px;">
-        <a href="/">Zurück zum Dashboard</a>
-      </p>
-    </div>
-  </main>
+        <div class="hr"></div>
+
+        <!-- Navigation Buttons unten -->
+        <div class="row">
+          <a class="btnLink" href="/">Zurück zur Startseite</a>
+          <a class="btnLink" href="/dashboard.html">Zu den Tests</a>
+        </div>
+
+      </section>
+    </main>
+  </div>
 </body>
 </html>

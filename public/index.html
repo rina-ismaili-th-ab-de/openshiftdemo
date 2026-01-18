@@ -2,22 +2,24 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="OpenShift PaaS Demo – Live Cluster Daten, Readiness & Load Balancing." />
   <title>OpenShift PaaS Demo</title>
-  <link rel="stylesheet" href="/style.css" />
+
+  <!-- Stylesheet mit Version, damit Browser/OpenShift nicht cached -->
+  <link rel="stylesheet" href="/style.css?v=3" />
 </head>
 
 <body>
   <div class="container">
 
+    <!-- Header + Navigation -->
     <header class="header">
       <div class="headerLeft">
         <div class="brandBlock">
-          <div class="brandTop">
-            <div class="brandText">
-              <h1 class="brandTitle">Red Hat OpenShift Container Platform</h1>
-              <p class="brandSubtitle">Platform as a Service (PaaS)</p>
-            </div>
+          <div class="brandText">
+            <h1 class="brandTitle">Red Hat OpenShift Container Platform</h1>
+            <p class="brandSubtitle">Platform as a Service (PaaS)</p>
           </div>
 
           <div class="brandMeta">
@@ -29,14 +31,18 @@
 
       <nav class="nav" aria-label="Navigation">
         <a href="/">Start</a>
+        <a href="/dashboard.html">Tests</a>
         <a href="/about.html">Kurz erklärt</a>
+
+        <!-- Lädt alle Live-Werte neu (api/info + api/ready) -->
         <button id="btnRefresh" type="button">Neu laden</button>
       </nav>
     </header>
 
+    <!-- Inhalt -->
     <main class="grid">
 
-      <!-- 1) Live-Daten (breit) -->
+      <!-- 1) Live-Daten (api/info) -->
       <section class="card span2" aria-label="Live Daten aus OpenShift">
         <h2>Live Daten aus OpenShift</h2>
 
@@ -72,7 +78,7 @@
         </div>
       </section>
 
-      <!-- 2) Readiness -->
+      <!-- 2) Readiness (api/ready) -->
       <section class="card" aria-label="Readiness">
         <h2>Readiness</h2>
 
@@ -96,11 +102,12 @@
         </div>
       </section>
 
-      <!-- 3) Load-Balancing -->
+      <!-- 3) Load-Balancing (Burst-Test) -->
       <section class="card" aria-label="Load Balancing">
         <h2>Load Balancing</h2>
 
         <div class="row">
+          <!-- Sendet 30 Requests an api/info und zählt Pod-Namen -->
           <button id="btnBurst" type="button">30 Requests starten</button>
           <span class="small" id="burstHint">Wenn nur 1 Pod erscheint: nochmal klicken.</span>
         </div>
@@ -111,7 +118,7 @@
         </div>
       </section>
 
-      <!-- 4) Live-Verlauf (breit) -->
+      <!-- 4) Live Verlauf -->
       <section class="card span2" aria-label="Live Verlauf">
         <h2>Live Verlauf</h2>
 
@@ -123,13 +130,15 @@
         <div id="historyList">–</div>
       </section>
 
-      <!-- 5) Stabilität (breit) -->
+      <!-- 5) Stabilität / Checks -->
       <section class="card span2" aria-label="Stabilität">
         <h2>Stabilität</h2>
 
         <div class="row">
           <button id="btnHealth" type="button">Health prüfen</button>
           <button id="btnReadyCheck" type="button">Ready prüfen</button>
+
+          <!-- Crash ist nur aktiv, wenn ALLOW_CRASH=true gesetzt ist -->
           <button id="btnCrash" type="button">Self Healing testen</button>
         </div>
 
@@ -155,9 +164,7 @@
     </main>
   </div>
 
-  <script src="/app.js"></script>
+  <!-- defer = Script startet erst, wenn HTML fertig geladen ist -->
+  <script src="/app.js?v=3" defer></script>
 </body>
 </html>
-
-
-

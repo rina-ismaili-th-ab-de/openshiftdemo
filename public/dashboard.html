@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="OpenShift Tests – Health, Readiness, Load-Balancing & Antwortzeiten live." />
   <title>OpenShift Tests</title>
 
-  <!-- Haupt-Styles -->
+  <!-- Version gegen Cache-Probleme -->
   <link rel="stylesheet" href="/style.css?v=3" />
 </head>
 
@@ -30,37 +31,35 @@
 
       <nav class="nav" aria-label="Navigation">
         <a href="/">Start</a>
-
-        <!-- Wichtig: Diese Seite heißt dashboard.html -->
-        <a href="/dashboard.html">Tests</a>
-
+        <a href="/dashboard.html" aria-current="page">Tests</a>
         <a href="/about.html">Kurz erklärt</a>
-
-        <!-- Startet später alle Tests (macht das JS) -->
         <button id="btnAll" type="button">Alle Tests starten</button>
       </nav>
     </header>
 
-    <!-- Hauptinhalt -->
+    <!-- Inhalt -->
     <main class="grid">
 
-      <section class="card">
+      <!-- 1) Health + Readiness -->
+      <section class="card" aria-label="Status Checks">
         <h2>Status-Checks</h2>
-        <p class="small">Diese Checks zeigen schnell: Läuft der Server und ist die App bereit für Traffic?</p>
+        <p class="small">
+          Diese Checks zeigen schnell, ob der Server läuft und ob OpenShift schon Traffic schicken darf.
+        </p>
 
         <div class="hr"></div>
 
-        <div class="badge" style="margin-bottom:10px;">
+        <div class="badge">
           <span class="dot warn" id="dotHealth"></span>
           <span id="txtHealth">Health: noch nicht geprüft</span>
         </div>
 
-        <div class="badge" style="margin-bottom:10px;">
+        <div class="badge" style="margin-top:10px;">
           <span class="dot warn" id="dotReady"></span>
           <span id="txtReady">Ready: noch nicht geprüft</span>
         </div>
 
-        <div class="row">
+        <div class="row" style="margin-top:12px;">
           <button id="btnHealth" type="button">Health prüfen</button>
           <button id="btnReady" type="button">Ready prüfen</button>
         </div>
@@ -74,10 +73,11 @@
         </div>
       </section>
 
-      <section class="card">
+      <!-- 2) Load Balancing -->
+      <section class="card" aria-label="Load Balancing">
         <h2>Load-Balancing Beweis</h2>
         <p class="small">
-          Wir senden 30 Requests an <code>/api/info</code>. Wenn 2 Pods laufen, sollten hier 2 Pod-Namen auftauchen.
+          Wir senden 30 Requests an <code>/api/info</code>. Wenn 2 Pods laufen, sollten hier auch 2 Pod-Namen auftauchen.
         </p>
 
         <div class="hr"></div>
@@ -97,13 +97,16 @@
 
         <div class="hr"></div>
 
-        <div class="chartTitle small">Antworten pro Pod (Balkendiagramm)</div>
+        <div class="small" style="margin-bottom:6px;">Antworten pro Pod</div>
         <div id="podBars" class="chart">–</div>
       </section>
 
-      <section class="card span2">
+      <!-- 3) Antwortzeiten -->
+      <section class="card span2" aria-label="Antwortzeit Verlauf">
         <h2>Antwortzeit-Verlauf (Stabilität)</h2>
-        <p class="small">Mini-Diagramm der letzten Antwortzeiten in ms (wird beim Burst automatisch gefüllt).</p>
+        <p class="small">
+          Das Diagramm zeigt die letzten Antwortzeiten in Millisekunden (wird automatisch beim Burst gefüllt).
+        </p>
 
         <div class="hr"></div>
 
@@ -126,11 +129,14 @@
         <div id="latencySpark" class="spark">–</div>
 
         <p class="small" style="margin-top:10px;">
-          Tipp: Stell in OpenShift die Replicas auf 2 und starte den Burst erneut. Dann sieht man die Verteilung noch besser.
+          Tipp: Stell in OpenShift die Replicas auf 2 und starte den Burst erneut.
         </p>
       </section>
 
     </main>
   </div>
 
-  <!-- Wichtig: Dein Dashboard brauc
+  <!-- Muss exakt so heißen: public/dashboard.js -->
+  <script src="/dashboard.js?v=3" defer></script>
+</body>
+</html>

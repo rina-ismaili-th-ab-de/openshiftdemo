@@ -4,11 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OpenShift Tests</title>
+
+  <!-- Haupt-Styles -->
   <link rel="stylesheet" href="/style.css?v=3" />
 </head>
+
 <body>
   <div class="container">
-    <div class="header">
+
+    <!-- Header + Navigation -->
+    <header class="header">
       <div class="headerLeft">
         <div class="brandBlock">
           <div class="brandText">
@@ -23,16 +28,23 @@
         </div>
       </div>
 
-      <div class="nav">
+      <nav class="nav" aria-label="Navigation">
         <a href="/">Start</a>
-        <a href="/tests.html">Tests</a>
-        <a href="/about.html">Kurz erklärt</a>
-        <button id="btnAll" type="button">Alle Tests starten</button>
-      </div>
-    </div>
 
-    <div class="grid">
-      <div class="card">
+        <!-- Wichtig: Diese Seite heißt dashboard.html -->
+        <a href="/dashboard.html">Tests</a>
+
+        <a href="/about.html">Kurz erklärt</a>
+
+        <!-- Startet später alle Tests (macht das JS) -->
+        <button id="btnAll" type="button">Alle Tests starten</button>
+      </nav>
+    </header>
+
+    <!-- Hauptinhalt -->
+    <main class="grid">
+
+      <section class="card">
         <h2>Status-Checks</h2>
         <p class="small">Diese Checks zeigen schnell: Läuft der Server und ist die App bereit für Traffic?</p>
 
@@ -60,9 +72,9 @@
           <div class="k">Hinweis</div>
           <div class="v" id="vHint">OpenShift schickt Traffic nur an Pods, die ready sind.</div>
         </div>
-      </div>
+      </section>
 
-      <div class="card">
+      <section class="card">
         <h2>Load-Balancing Beweis</h2>
         <p class="small">
           Wir senden 30 Requests an <code>/api/info</code>. Wenn 2 Pods laufen, sollten hier 2 Pod-Namen auftauchen.
@@ -87,9 +99,9 @@
 
         <div class="chartTitle small">Antworten pro Pod (Balkendiagramm)</div>
         <div id="podBars" class="chart">–</div>
-      </div>
+      </section>
 
-      <div class="card span2">
+      <section class="card span2">
         <h2>Antwortzeit-Verlauf (Stabilität)</h2>
         <p class="small">Mini-Diagramm der letzten Antwortzeiten in ms (wird beim Burst automatisch gefüllt).</p>
 
@@ -116,10 +128,9 @@
         <p class="small" style="margin-top:10px;">
           Tipp: Stell in OpenShift die Replicas auf 2 und starte den Burst erneut. Dann sieht man die Verteilung noch besser.
         </p>
-      </div>
-    </div>
+      </section>
+
+    </main>
   </div>
 
-  <script src="/tests.js?v=3"></script>
-</body>
-</html>
+  <!-- Wichtig: Dein Dashboard brauc
